@@ -86,7 +86,7 @@ def printt(message):
 
 def LogWrite(message):
     """Write logs"""
-    if config.get('Main', 'log_write'):
+    if config('Main')['log_write']:
         log = open(filelog, 'a')
         log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
         log.close()
