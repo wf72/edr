@@ -17,19 +17,6 @@ from time import strftime
 from xml.dom import minidom
 
 
-def printt(message):
-    """print messages"""
-    if Verbose:
-        print message
-
-
-def LogWrite(message):
-    """Write logs"""
-    log = open(filelog, 'a')
-    log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
-    log.close()
-
-
 def config(section=''):
     """ConfigParser"""
     global work_dir
@@ -87,6 +74,20 @@ def config(section=''):
                 dict1[option] = None
 
         return dict1
+
+
+def printt(message):
+    """print messages"""
+    if Verbose:
+        print message
+
+
+def LogWrite(message):
+    """Write logs"""
+    if config.get('Main', 'log_write'):
+        log = open(filelog, 'a')
+        log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
+        log.close()
 
 
 def DBConnect():
@@ -210,14 +211,15 @@ def DeleteTrash():
 
 def zabbix_status_write(status):
     """Пишем статус проверки в файл, для zabbix"""
-    zb_file = open(zabbix_status_file, "w")
-    if status:
-        zb_file.write("1\n")
-        printt("Writing to zb_status 1")
-    else:
-        zb_file.write("0\n")
-        printt("Writing to zb_status 0")
-    zb_file.close()
+    if config.get('Main', 'zb_file'):
+        zb_file = open(zabbix_status_file, "w")
+        if status:
+            zb_file.write("1\n")
+            printt("Writing to zb_status 1")
+        else:
+            zb_file.write("0\n")
+            printt("Writing to zb_status 0")
+        zb_file.close()
 
 
 def getLastDumpDate():

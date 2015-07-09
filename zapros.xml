@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<request>
+    <requestTime>2012-01-01T01:01:01.000+06:00</requestTime>
+    <operatorName>Общество с ограниченной ответственностью «Пример»</operatorName>
+    <inn>1234567890</inn>
+    <ogrn>1234567890123</ogrn>
+    <email>email@example.com</email>
+</request>

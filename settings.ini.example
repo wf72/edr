@@ -1,9 +1,12 @@
 [Main]
+export_ip_file = True
 Verbose = True
+log_write = True
+zb_file = True
 
 [URLS]
 API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl
-STOP_URL = 302:http://zapret.example.net\n
+STOP_URL = 302:http://zapret.example.net
 
 [DBConfig]
 dbHost = localhost
@@ -18,3 +21,4 @@ dumpFormatVersion = 2.0
 path_IP_file = edr_ipfile.txt
 filelog = edr.log
 zabbix_status_file = zb_status
+bind_file = bind_file.conf
