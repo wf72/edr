@@ -16,6 +16,8 @@ import ConfigParser
 from time import strftime
 from xml.dom import minidom
 
+import zapretbind
+
 
 def config(section=''):
     """ConfigParser"""
@@ -314,6 +316,7 @@ def start():
                 file.close()
                 exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
+                zapretbind.main()
                 break
             else:
                 # Архив не получен, проверяем причину.
