@@ -267,7 +267,7 @@ def getResult(code):
 
 def exportIp(file):
     """Пишем данные в файл"""
-    if config.get('Main', 'export_ip_file'):
+    if config('Main')['export_ip_file']:
         printt("Пишем данные в файл")
         zf = zipfile.ZipFile(file, 'r')
         zf.extractall(work_dir)
