@@ -1,0 +1,20 @@
+[Main]
+Verbose = True
+
+[URLS]
+API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl
+STOP_URL = 302:http://zapret.example.net\n
+
+[DBConfig]
+dbHost = localhost
+dbUser = edr
+dbName = edr
+dbPassword = 123
+
+[Dirs]
+XML_FILE_NAME = zapros.xml
+SIG_FILE_NAME = zapros.xml.sign
+dumpFormatVersion = 2.0
+path_IP_file = edr_ipfile.txt
+filelog = edr.log
+zabbix_status_file = zb_status
