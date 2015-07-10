@@ -19,6 +19,9 @@ from xml.dom import minidom
 import zapretbind
 
 
+def str2bool(value):
+    return True if value.lower() in ('true', 'yes', '1') else False
+
 def config(section=''):
     """ConfigParser"""
     global work_dir
@@ -80,13 +83,14 @@ def config(section=''):
 
 def printt(message):
     """print messages"""
-    if Verbose:
+    if str2bool(Verbose):
+        print bool(Verbose)
         print message
 
 
 def LogWrite(message):
     """Write logs"""
-    if config('Main')['log_write']:
+    if str2bool(config('Main')['log_write']):
         log = open(filelog, 'a')
         log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
         log.close()
@@ -267,7 +271,7 @@ def getResult(code):
 
 def exportIp(file):
     """Пишем данные в файл"""
-    if config('Main')['export_ip_file']:
+    if str2bool(config('Main')['export_ip_file']):
         printt("Пишем данные в файл")
         zf = zipfile.ZipFile(file, 'r')
         zf.extractall(work_dir)

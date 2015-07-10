@@ -30,7 +30,7 @@ def __genereate():
 
 
 def main():
-    if __edr.config('Main')['bind']:
+    if __edr.str2bool(__edr.config('Main')['bind']):
         __start()
         __genereate()
 
