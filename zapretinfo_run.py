@@ -41,7 +41,7 @@ def config(section=''):
                      'Verbose': False}
 
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
-    Config.read(work_dir + "/settings.cfg")
+    Config.read("settings.cfg")
 
     global Verbose
     Verbose = Config.get('Main', 'Verbose')
