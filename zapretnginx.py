@@ -44,7 +44,7 @@ def __genereate():
                     proxy_pass http://127.0.0.1
                 }
             """ % {'path': edr_url.path}
-
+        # не доделал переадресацию запрещенных урлов и проксирование обычных, так как не силён в nginx.
         if not all_domain_block:
             conf_location += """
                 location / {
