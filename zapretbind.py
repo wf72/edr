@@ -19,7 +19,7 @@ def __genereate():
     """
     bind_file_path = __edr.config('Dirs')['bind_file']
     bind_file = open(bind_file_path, 'w')
-    cur.execute("SELECT domain from edrdata where disabled=0")
+    cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     for rec in data:
         edr_url = rec[0].strip()

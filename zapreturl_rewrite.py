@@ -27,7 +27,7 @@ def __validateurl(line):
     __edr.LogWrite('Reques: %s' % line)
     llist = line.split(' ')
     url = urlparse(llist[0].strip())
-    cur.execute('SELECT url from __edrdata where domain=%s and disabled=0',
+    cur.execute('SELECT url from edrdata where domain=%s and disabled=0',
                 (url.netloc,))
     data = cur.fetchall()
     for rec in data:
