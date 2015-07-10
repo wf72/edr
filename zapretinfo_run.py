@@ -189,7 +189,7 @@ def UpdateTable():
                     cur.execute(
                         "INSERT edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                         (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd))
-                    printt("Updating DB:")
+                    printt("Добавляем новое значение: ")
                     printt(
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))

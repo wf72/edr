@@ -8,14 +8,14 @@ from urlparse import urlparse
 import zapretinfo_run as __edr
 
 
-def start():
+def __start():
     __edr.config()
     global con
     global cur
     con, cur = __edr.DBConnect()
 
 
-def ValidateUrl(line):
+def __validateurl(line):
     """
     Проверяем URL по базе
     :param line: Строка, переданная squidoм, первый параметр URL, второй - адрес клиента
@@ -26,15 +26,15 @@ def ValidateUrl(line):
         return
     __edr.LogWrite('Reques: %s' % line)
     llist = line.split(' ')
-    URL = urlparse(llist[0].strip())
+    url = urlparse(llist[0].strip())
     cur.execute('SELECT url from __edrdata where domain=%s and disabled=0',
-                (URL.netloc,))
+                (url.netloc,))
     data = cur.fetchall()
     for rec in data:
         __edr_url = urlparse(rec[0].strip())
-        if (not __edr_url.path) and (__edr_url.netloc == URL.netloc):
+        if (not __edr_url.path) and (__edr_url.netloc == url.netloc):
             ban = 1
-        elif (__edr_url.netloc == URL.netloc) and (__edr_url.path == URL.path):
+        elif (__edr_url.netloc == url.netloc) and (__edr_url.path == url.path):
             ban = 1
 
     if not ban:
@@ -46,10 +46,10 @@ def ValidateUrl(line):
 
 
 def main():
-    start()
+    __start()
     while True:
         llist = sys.stdin.readline().strip()
-        sys.stdout.write(ValidateUrl(llist))
+        sys.stdout.write(__validateurl(llist))
         sys.stdout.flush()
 
 
