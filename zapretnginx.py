@@ -44,7 +44,7 @@ def __genereate():
                     proxy_pass http://127.0.0.1
                 }
             """ % {'path': edr_url.path}
-        if not all_domain_block:
+        if not domain_block:
             conf_location += """
                 location / {
                     proxy_pass %s://$host
@@ -65,7 +65,7 @@ def __genereate():
 
 
 def main():
-    if __edr.str2bool(__edr.config('Main')['bind']):
+    if __edr.str2bool(__edr.config('Main')['nginx']):
         __start()
         __genereate()
 
