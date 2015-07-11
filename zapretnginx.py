@@ -46,7 +46,7 @@ def __genereate():
             conf_location += """    location %s {
         proxy_pass http://127.0.0.1;
                 }
-""" % (quote(edr_url.path) if edr_url.path else "/")
+""" % (quote(edr_url.path+'?'+edr_url.query) if edr_url.path else "/")
         if not domain_block:
             conf_location += """    location / {
         proxy_pass http://$host;
