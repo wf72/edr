@@ -15,7 +15,6 @@ def __genereate():
     cur.execute("SELECT url FROM edrdata WHERE disabled=0;")
     data = cur.fetchall()
     for rec in data:
-        print rec
         edr_url = rec[0].strip()
         edr_url2 = edr_url+"/"
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url=%s", edr_url2)
@@ -25,7 +24,7 @@ def __genereate():
             __edr.printt("second: %s" % rec2)
             cur.execute("DELETE FROM edrdata WHERE url = %s;", edr_url)
             con.commit()
-            print("Deleted: %s" % edr_url)
+            __edr.printt("Deleted: %s" % edr_url)
 
     cur.execute("DELETE e1 FROM  edrdata e1, edrdata e2 WHERE e1.id > e2.id AND e1.url = e2.url;")
     con.commit()
