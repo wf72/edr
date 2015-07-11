@@ -177,11 +177,11 @@ def UpdateTable():
                     decNumber = child2.attrib['number'].encode('utf8')
                     decOrg = child2.attrib['org'].encode('utf8')
                 elif child2.tag == 'url':
-                    url = child2.text.encode('utf8')
+                    url = child2.text.strip().encode('utf8')
                 elif child2.tag == 'domain':
-                    domain = child2.text.encode('utf8')
+                    domain = child2.text.strip().encode('utf8')
                 elif child2.tag == 'ip':
-                    ip = child2.text.encode('utf8')
+                    ip = child2.text.strip().encode('utf8')
                 if not cur.execute(
                         "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
                         (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
