@@ -27,7 +27,10 @@ def __genereate():
             __edr.printt("Deleted: %s" % edr_url)
 
     cur.execute("DELETE e1 FROM  edrdata e1, edrdata e2 WHERE e1.id > e2.id AND e1.url = e2.url;")
+    con.commit()
     cur.execute('DELETE FROM  edrdata WHERE  url like "%?";')
+    con.commit()
+    cur.execute('DELETE FROM  edrdata WHERE  url like "%#";')
     con.commit()
     con.close()
 
