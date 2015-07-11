@@ -29,10 +29,16 @@ def __genereate():
         edr_domain = rec[0].strip()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%s;", (edr_domain,))
         edr_urls = cur.fetchall()
-        edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
-        conf_server = """server {
+        # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
+        edr_ports = set([urlparse(i[0]).scheme for i in edr_urls if i[0]])
+        for edr_port in edr_ports:
+            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%(domain)s and url like '%(scheme)s\%;",
+                        {'domain': edr_domain, 'scheme': edr_port})
+            edr_urls = cur.fetchall()
+            conf_server = """server {
     server_name %(domain)s;
-""" % {'domain': edr_domain}
+    listen %(port)s;
+""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
         for port in edr_ports:
             conf_server += """    listen %s;
 """ % port
