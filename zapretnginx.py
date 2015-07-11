@@ -32,38 +32,34 @@ def __genereate():
         # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
         edr_ports = set([urlparse(i[0]).scheme for i in edr_urls if i[0]])
         for edr_port in edr_ports:
-            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%(domain)s and url like '%(scheme)s\%;",
-                        {'domain': edr_domain, 'scheme': edr_port})
+            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%(domain)s and url like '%(scheme)s;",
+                        {'domain': edr_domain, 'scheme': edr_port+'%'})
             edr_urls = cur.fetchall()
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
 """ % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
-        for port in edr_ports:
-            conf_server += """    listen %s;
-""" % port
-
-        # Формирует location
-        conf_location = ""
-        domain_block = 0
-        for edr_url in edr_urls:
-            edr_url = urlparse(edr_url[0])
-            domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
-            conf_location += """    location %s {
+            # Формирует location
+            conf_location = ""
+            domain_block = 0
+            for edr_url in edr_urls:
+                edr_url = urlparse(edr_url[0])
+                domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
+                conf_location += """    location %s {
         proxy_pass http://127.0.0.1;
                 }
 """ % (quote(edr_url.path+'?'+edr_url.query) if edr_url.path else "/")
-        if not domain_block:
-            conf_location += """    location / {
+            if not domain_block:
+                conf_location += """    location / {
         proxy_pass http://$host;
                 }
 """
         # Закрываем настройки сервера
-        conf_end = """}
+            conf_end = """}
 """
-        __edr.printt(conf_server + conf_location + conf_end)
+            __edr.printt(conf_server + conf_location + conf_end)
 
-        nginx_conf_file.write(conf_server + conf_location + conf_end)
+            nginx_conf_file.write(conf_server + conf_location + conf_end)
 
     nginx_conf_file.close()
 
