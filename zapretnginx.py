@@ -50,7 +50,7 @@ def __genereate():
                 location / {
                 proxy_pass %s://$host
                 }
-            """ % edr_url.netloc
+            """ % edr_url.scheme
         # Закрываем настройки сервера
         conf_end = """
             }
