@@ -36,6 +36,7 @@ def __genereate():
         """ % {'ports': edr_ports, 'domain': edr_domain}
         # Формирует location
         conf_location = ""
+        domain_block = 0
         for edr_url in edr_urls:
             edr_url = urlparse(edr_url[0])
             domain_block = 0 if edr_url.path else 1
@@ -43,9 +44,9 @@ def __genereate():
                 location /%s {
                     proxy_pass http://127.0.0.1
                 }
-            """ % {'path': edr_url.path}
-        if not domain_block:
-            conf_location += """
+            """ % edr_url.path
+            if not domain_block:
+                conf_location += """
                 location / {
                     proxy_pass %s://$host
                 }
