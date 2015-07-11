@@ -54,6 +54,8 @@ def __genereate():
                     url_string += "/"
                 if edr_url.query:
                     url_string += "?" + quote(edr_url.query)
+                if edr_url.fragment:
+                    url_string += "#" + quote(edr_url.fragment)
                 conf_location += """    location %s {
         proxy_pass http://127.0.0.1;
                 }
