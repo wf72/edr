@@ -44,11 +44,11 @@ def __genereate():
                 location %s {
                     proxy_pass http://127.0.0.1
                 }
-            """ % edr_url.path if edr_url.path else "/"
-            if not domain_block:
-                conf_location += """
+            """ % (edr_url.path if edr_url.path else "/")
+        if not domain_block:
+            conf_location += """
                 location / {
-                    proxy_pass %s://$host
+                proxy_pass %s://$host
                 }
             """ % edr_url.netloc
         # Закрываем настройки сервера
