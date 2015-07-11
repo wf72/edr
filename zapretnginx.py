@@ -54,12 +54,9 @@ def __genereate():
         conf_end = """
             }
         """
-        if edr_urls.__len__() > 1:
-            print edr_urls
-            print(conf_server + conf_location + conf_end)
-            break
+        print(conf_server + conf_location + conf_end)
 
-            # nginx_conf_file.write(data)
+        nginx_conf_file.write(data)
 
     nginx_conf_file.close()
 
