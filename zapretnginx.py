@@ -28,7 +28,7 @@ def __genereate():
         edr_domain = rec[0].strip()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%s;", (edr_domain,))
         edr_urls = cur.fetchall()
-        edr_ports = ' '.join(set(['443' if urlparse(i).scheme == 'https' else '80' for in edr_urls if i]))
+        edr_ports = ' '.join(set(['443' if urlparse(i).scheme == 'https' else '80' for i in edr_urls if i]))
         conf_server = """
         server {
             listen %(ports)s;
@@ -39,7 +39,7 @@ def __genereate():
         domain_block = 0
         for edr_url in edr_urls:
             edr_url = urlparse(edr_url[0])
-            domain_block = 0 if ((edr_url.path) and (not edr_url.path=='/')) else 1
+            domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
             conf_location += """
                 location %s {
                     proxy_pass http://127.0.0.1
