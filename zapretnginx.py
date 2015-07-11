@@ -42,13 +42,13 @@ def __genereate():
             domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
             conf_location += """
                 location %s {
-                    proxy_pass http://127.0.0.1
+                    proxy_pass http://127.0.0.1;
                 }
             """ % (edr_url.path if edr_url.path else "/")
         if not domain_block:
             conf_location += """
                 location / {
-                proxy_pass http://$host
+                proxy_pass http://$host;
                 }
             """
         # Закрываем настройки сервера
