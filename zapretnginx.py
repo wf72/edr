@@ -28,7 +28,7 @@ def __genereate():
         edr_domain = rec[0].strip()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%s;", (edr_domain,))
         edr_urls = cur.fetchall()
-        edr_ports = ' '.join(set(['443' if i == 'https' else '80' for i in edr_urls if i]))
+        edr_ports = ' '.join(set(['443' if urlparse(i).scheme == 'https' else '80' for in edr_urls if i]))
         conf_server = """
         server {
             listen %(ports)s;
