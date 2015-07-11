@@ -31,10 +31,14 @@ def __genereate():
         edr_ports = ' '.join(set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]]))
         conf_server = """
         server {
-            listen %(ports)s;
+
             server_name %(domain)s;
         """ % {'ports': edr_ports, 'domain': edr_domain}
         # Формирует location
+        for port in ports:
+            conf_server += """
+                listen %s;
+            """ % port
         conf_location = ""
         domain_block = 0
         for edr_url in edr_urls:
