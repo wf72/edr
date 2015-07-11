@@ -48,14 +48,14 @@ def __genereate():
         if not domain_block:
             conf_location += """
                 location / {
-                proxy_pass %s://$host
+                proxy_pass http://$host
                 }
-            """ % edr_url.scheme
+            """
         # Закрываем настройки сервера
         conf_end = """
             }
         """
-        print(conf_server + conf_location + conf_end)
+        __edr.printt(conf_server + conf_location + conf_end)
 
         nginx_conf_file.write(conf_server + conf_location + conf_end)
 
