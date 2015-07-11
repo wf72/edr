@@ -30,7 +30,7 @@ def __genereate():
         edr_urls = cur.fetchall()
         edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
         conf_server = """server {
-            server_name %(domain)s;
+    server_name %(domain)s;
 """ % {'domain': edr_domain}
         for port in edr_ports:
             conf_server += """    listen %s;
@@ -43,17 +43,16 @@ def __genereate():
             edr_url = urlparse(edr_url[0])
             domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
             conf_location += """    location %s {
-                    proxy_pass http://127.0.0.1;
+        proxy_pass http://127.0.0.1;
                 }
 """ % (edr_url.path if edr_url.path else "/")
         if not domain_block:
             conf_location += """    location / {
-                proxy_pass http://$host;
+        proxy_pass http://$host;
                 }
 """
         # Закрываем настройки сервера
-        conf_end = """
-            }
+        conf_end = """}
 """
         __edr.printt(conf_server + conf_location + conf_end)
 
