@@ -39,9 +39,9 @@ def __genereate():
         domain_block = 0
         for edr_url in edr_urls:
             edr_url = urlparse(edr_url[0])
-            domain_block = 0 if edr_url.path else 1
+            domain_block = 0 if (edr_url.path) or not (edr_url.path="\") else 1
             conf_location += """
-                location /%s {
+                location %s {
                     proxy_pass http://127.0.0.1
                 }
             """ % edr_url.path
@@ -50,7 +50,7 @@ def __genereate():
                 location / {
                     proxy_pass %s://$host
                 }
-            """ % edr_url.path
+            """ % edr_url.netloc
         # Закрываем настройки сервера
         conf_end = """
             }
