@@ -17,6 +17,8 @@ from time import strftime
 from xml.dom import minidom
 
 import zapretbind
+import zapretnginx
+import zapretdelete_duple
 
 
 def str2bool(value):
@@ -319,7 +321,9 @@ def start():
                 file.close()
                 exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
+                zapretdelete_duple.main()
                 zapretbind.main()
+                zapretnginx.main()
                 break
             else:
                 # Архив не получен, проверяем причину.
