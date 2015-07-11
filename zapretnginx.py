@@ -47,8 +47,13 @@ def __genereate():
                 # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
                 if (not edr_url.path) or (edr_url.path == '/'):
                     domain_block = 1
-                url_string = (quote(edr_url.path) if edr_url.path\
-                    else '/') + (('?' + quote(edr_url.query)) if edr_url.query else "")
+                url_string = ''
+                if edr_url.path:
+                    url_string += quote(edr_url.path)
+                else:
+                    url_string += "/"
+                if edr_url.query:
+                    url_string += "?" + quote(edr_url.query)
                 conf_location += """    location %s {
         proxy_pass http://127.0.0.1;
                 }
