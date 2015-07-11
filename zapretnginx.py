@@ -56,7 +56,7 @@ def __genereate():
         """
         print(conf_server + conf_location + conf_end)
 
-        nginx_conf_file.write(data)
+        nginx_conf_file.write(conf_server + conf_location + conf_end)
 
     nginx_conf_file.close()
 
