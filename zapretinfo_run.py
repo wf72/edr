@@ -324,6 +324,7 @@ def start():
                 zapretdelete_duple.main()
                 zapretbind.main()
                 zapretnginx.main()
+                con.close()
                 break
             else:
                 # Архив не получен, проверяем причину.
@@ -337,12 +338,14 @@ def start():
                     printt('Error: %s' % request['resultComment'])
                     LogWrite("%s: Update error %s\n" % (strftime("%Y-%m-%d %H:%M:%S"), request['resultComment']))
                     zabbix_status_write(0)
+                    con.close()
                     break
     else:
         # Запрос не принят, возвращаем ошибку
         printt('Error: %s' % request['resultComment'])
         LogWrite("%s: Update error %s\n" % (strftime("%Y-%m-%d %H:%M:%S"), request['resultComment']))
         zabbix_status_write(0)
+        con.close()
 
 
 def main(argv):

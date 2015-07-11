@@ -27,6 +27,7 @@ def __genereate():
         bind_file.write(data)
 
     bind_file.close()
+    con.close()
 
 
 def main():
