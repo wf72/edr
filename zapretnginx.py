@@ -22,11 +22,12 @@ def __genereate():
     """
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     nginx_conf_file = open(nginx_conf_file_path, 'w')
-    cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
+    cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    for rec in data:
+    domains = sorted(set([urlparse(url[0]).netloc for url in data]))
+
+    for edr_domain in domains:
         # Формируем секцию server
-        edr_domain = rec[0].strip()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and domain=%s;", (edr_domain,))
         edr_urls = cur.fetchall()
         # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
@@ -59,7 +60,7 @@ def __genereate():
                 conf_location += """    location %s {
         proxy_pass http://127.0.0.1;
                 }
-""" % (url_string)
+""" % url_string
             if not domain_block:
                 conf_location += """    location / {
         proxy_pass http://$host;
