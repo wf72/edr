@@ -25,6 +25,7 @@ def __genereate():
         if urlparse(edr_url).netloc[-1:] == ".":
             cur.execute("DELETE FROM edrdata WHERE url = %s;", edr_url)
             con.commit()
+            continue
         edr_url2 = edr_url+"/"
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url=%s", edr_url2)
         data2 = cur.fetchall()
