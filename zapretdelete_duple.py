@@ -3,7 +3,7 @@
 __author__ = 'wf'
 
 import zapretinfo_run as __edr
-from urlparse import urlparse
+
 
 def __start():
     __edr.config()
@@ -22,10 +22,6 @@ def __genereate():
     data = cur.fetchall()
     for rec in data:
         edr_url = rec[0].strip()
-        if urlparse(edr_url).netloc[-1:] == ".":
-            cur.execute("DELETE FROM edrdata WHERE url = %s;", edr_url)
-            con.commit()
-            continue
         edr_url2 = edr_url+"/"
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url=%s", edr_url2)
         data2 = cur.fetchall()

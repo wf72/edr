@@ -161,6 +161,7 @@ def CreateDB():
 def UpdateTable():
     printt("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
+    con.commit()
     xmlfile = etree.parse(work_dir + 'dump.xml')
     xmlroot = xmlfile.getroot()
     for child in xmlroot:
