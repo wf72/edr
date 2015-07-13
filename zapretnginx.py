@@ -28,7 +28,7 @@ def __genereate():
 
     for edr_domain in domains:
         # Формируем секцию server
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('://'+edr_domain+'%',))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://'+edr_domain+'%',))
         edr_urls = cur.fetchall()
         edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
         for edr_port in edr_ports:
@@ -38,8 +38,9 @@ def __genereate():
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
-    resolver 8.8.8.8;
-""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
+    resolver %(dns_server)s;
+""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80',
+       'dns_server': __edr.config('Main')['dns_server']}
             # Формирует location
             conf_location = ""
             domain_block = 0
