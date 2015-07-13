@@ -33,7 +33,7 @@ def __genereate():
         # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
         edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
         for edr_port in edr_ports:
-            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s%%;",
+            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
                         edr_port+'://'+edr_domain+'%')
             edr_urls = cur.fetchall()
             conf_server = """server {
