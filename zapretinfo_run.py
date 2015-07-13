@@ -132,7 +132,7 @@ def CreateDB():
         `url` TEXT,
         `domain` VARCHAR(255),
         `ip` VARCHAR(255),
-        `disabled` BIT
+        `disabled` TINYINT
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
         CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
