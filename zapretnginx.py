@@ -50,7 +50,9 @@ def __genereate():
                 if (not edr_url.path) or (edr_url.path == '/'):
                     domain_block = 1
                 if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
-                    url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3]
+                    url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:]
+                    url_string = quote(url_string).replace('%3D','=')\
+                        .replace('%26','&').replace('%23','#').replace('%3F','?')
                 conf_location += """    location %s {
         proxy_pass %s;
                 }
