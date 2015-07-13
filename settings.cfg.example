@@ -7,7 +7,7 @@ zb_file = True
 [URLS]
 API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl
 STOP_URL = 302:http://zapret.example.net
-NGINX_STOP_URL = http://zapret.example.net
+nginx_stop_url = http://zapret.example.net
 
 [DBConfig]
 dbHost = localhost

@@ -44,16 +44,17 @@ def __genereate():
             # Формирует location
             conf_location = ""
             domain_block = 0
-            for edr_url in edr_urls:
-                edr_url = urlparse(edr_url[0].strip())
+            for edr_url_temp in edr_urls:
+                edr_url = urlparse(edr_url_temp[0].strip())
                 # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
                 if (not edr_url.path) or (edr_url.path == '/'):
                     domain_block = 1
-                url_string = edr_url[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3]
+                if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
+                    url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3]
                 conf_location += """    location %s {
         proxy_pass http://%s;
                 }
-""" % url_string, __edr.config('URLS')['NGINX_STOP_URL']
+""" % (url_string, __edr.config('URLS')['nginx_stop_url'])
             if not domain_block:
                 conf_location += """    location / {
         proxy_pass http://$host;
