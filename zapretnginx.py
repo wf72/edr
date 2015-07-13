@@ -49,19 +49,11 @@ def __genereate():
                 # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
                 if (not edr_url.path) or (edr_url.path == '/'):
                     domain_block = 1
-                url_string = ''
-                if edr_url.path:
-                    url_string += quote(edr_url.path)
-                else:
-                    url_string += "/"
-                if edr_url.query:
-                    url_string += "?" + edr_url.query
-                if edr_url.fragment:
-                    url_string += "#" + edr_url.fragment
+                url_string = edr_url[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3]
                 conf_location += """    location %s {
-        proxy_pass http://1.1.254.93;
+        proxy_pass http://%s;
                 }
-""" % url_string
+""" % url_string, __edr.config('URLS')['NGINX_STOP_URL']
             if not domain_block:
                 conf_location += """    location / {
         proxy_pass http://$host;
