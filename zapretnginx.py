@@ -70,7 +70,7 @@ def __genereate():
             nginx_conf_file.write(conf_server + conf_location + conf_end)
 
     nginx_conf_file.close()
-
+    con.close()
 
 def main():
     if __edr.str2bool(__edr.config('Main')['nginx']):
