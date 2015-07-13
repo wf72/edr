@@ -51,8 +51,10 @@ def __genereate():
                     domain_block = 1
                 if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
                     url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:]
-                    url_string = quote(url_string).replace('%3D','=')\
-                        .replace('%26','&').replace('%23','#').replace('%3F','?')
+                    url_string = quote(url_string).replace('%3D', '=')\
+                        .replace('%26', '&').replace('%23', '#').replace('%3F', '?')
+                else:
+                    url_string = "/"
                 conf_location += """    location %s {
         proxy_pass %s;
                 }
