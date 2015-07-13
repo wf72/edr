@@ -39,6 +39,7 @@ def __genereate():
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
+    resolver 8.8.8.8;
 """ % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
             # Формирует location
             conf_location = ""
@@ -54,11 +55,11 @@ def __genereate():
                 else:
                     url_string += "/"
                 if edr_url.query:
-                    url_string += "?" + quote(edr_url.query)
+                    url_string += "?" + edr_url.query
                 if edr_url.fragment:
-                    url_string += "#" + quote(edr_url.fragment)
+                    url_string += "#" + edr_url.fragment
                 conf_location += """    location %s {
-        proxy_pass http://127.0.0.1;
+        proxy_pass http://1.1.254.93;
                 }
 """ % url_string
             if not domain_block:
