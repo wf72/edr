@@ -57,7 +57,7 @@ def __genereate():
                 else:
                     url_string = "/"
                 conf_location += """    location %s {
-        proxy_pass %s;
+         rewrite ^ %s permanent;
                 }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
             if not domain_block:
