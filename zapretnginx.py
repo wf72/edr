@@ -53,7 +53,7 @@ def __genereate():
                     # if edr_url_temp[0].strip().__contains__(" ") and re.search('[А-Я]+', edr_url_temp[0]):
                     #     url_string = quote(url_string).replace('%3D', '=') \
                     #         .replace('%26', '&').replace('%23', '#').replace('%3F', '?')
-                conf_location += """    location '%s' {
+                conf_location += """    location "%s" {
         proxy_pass %s;
                 }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
