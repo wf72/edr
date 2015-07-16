@@ -132,7 +132,7 @@ def CreateDB():
         `url` TEXT,
         `domain` VARCHAR(255),
         `ip` VARCHAR(255),
-        `disabled` BIT
+        `disabled` TINYINT
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
         CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
@@ -149,7 +149,7 @@ def CreateDB():
         sqltext = """USE %s
         """ % config('DBConfig')['db']
         curcreate.execute(sqltext)
-        curcreate.execute("INSERT INTO version SET `version`=%s", (0.1,))
+        curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
         concreate.commit()
     except db.Error, e:
         try:
