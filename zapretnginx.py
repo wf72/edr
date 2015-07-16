@@ -3,8 +3,6 @@
 __author__ = 'wf'
 
 from urlparse import urlparse
-from urllib import quote
-import re
 
 import zapretinfo_run as __edr
 
@@ -52,10 +50,10 @@ def __genereate():
                     domain_block = 1
                 if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
                     url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:]
-                    if edr_url_temp[0].strip().__contains__(" ") and re.search('[А-Я]+', edr_url_temp[0]):
-                        url_string = quote(url_string).replace('%3D', '=') \
-                            .replace('%26', '&').replace('%23', '#').replace('%3F', '?')
-                conf_location += """    location %s {
+                    # if edr_url_temp[0].strip().__contains__(" ") and re.search('[А-Я]+', edr_url_temp[0]):
+                    #     url_string = quote(url_string).replace('%3D', '=') \
+                    #         .replace('%26', '&').replace('%23', '#').replace('%3F', '?')
+                conf_location += """    location '%s' {
         proxy_pass %s;
                 }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
