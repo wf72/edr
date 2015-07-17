@@ -25,7 +25,8 @@ def __genereate():
     for rec in data:
         edr_url = rec[0].strip()
         if (not edr_url.lower() in skip_domain) and (edr_url.strip()[-1:].isalpha()):
-            data = ('zone "%s" { type master; file "/etc/bind/master/block-edr"; allow-query { any; }; };\n' % edr_url)
+            data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
+            edr_url, __edr.config('Dirs')['bind_block_file']))
             bind_file.write(data)
 
     bind_file.close()
