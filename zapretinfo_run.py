@@ -22,7 +22,7 @@ import zapretdelete_duple
 
 
 def str2bool(value):
-    if type(valeu) == type(True):
+    if type(value) == type(True):
         return value
     return True if value.lower() in ('true', 'yes', '1') else False
 
