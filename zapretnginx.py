@@ -83,11 +83,10 @@ def __genereate():
         edr_urls = cur.fetchall()
         if not edr_urls:
             continue
-        edr_port = urlparse(edr_urls[0][0]).strip().scheme if edr_urls[0][0] else "http"
+        edr_port = urlparse(edr_urls[0][0].strip()).scheme if edr_urls[0][0] else "http"
         conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
-    resolver 8.8.8.8;
 """ % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
             # Формирует location
         conf_location = """    location / {
