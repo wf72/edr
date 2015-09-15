@@ -63,6 +63,14 @@ def __genereate():
         proxy_pass http://$host;
                 }
 """
+
+        # Закрываем настройки сервера
+            conf_end = """}
+"""
+            __edr.printt(conf_server + conf_location + conf_end)
+
+            nginx_conf_file.write(conf_server + conf_location + conf_end)
+
      # для одиночных доменов, без урлов
     for edr_domain in domains:
         # Формируем секцию server
