@@ -43,6 +43,7 @@ def __genereate():
             # Формирует location
             conf_location = ""
             domain_block = 0
+            url_string = "/"
             for edr_url_temp in edr_urls:
                 edr_url = urlparse(edr_url_temp[0].strip())
                 # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
@@ -62,6 +63,24 @@ def __genereate():
         proxy_pass http://$host;
                 }
 """
+     # для одиночных доменов, без урлов
+    for edr_domain in domains:
+        # Формируем секцию server
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain,))
+        edr_urls = cur.fetchall()
+        edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
+        for edr_port in edr_ports:
+            conf_server = """server {
+    server_name %(domain)s;
+    listen %(port)s;
+    resolver 8.8.8.8;
+""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
+            # Формирует location
+            conf_location += """    location / {
+        proxy_pass %s;
+                }
+""" % (__edr.config('URLS')['nginx_stop_url'])
+
         # Закрываем настройки сервера
             conf_end = """}
 """
