@@ -38,8 +38,8 @@ def __genereate():
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
-    resolver 8.8.8.8;
-""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
+    resolver %(dns_serv)s;
+""" % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('URLS')['dns_serv']}
             # Формирует location
             conf_location = ""
             domain_block = 0

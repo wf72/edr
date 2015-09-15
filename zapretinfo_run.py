@@ -42,7 +42,7 @@ def config(section=''):
                      'user': '',
                      'passwd': '',
                      'db': '',
-                     'dns_serv': '8.8.8.8';
+                     'dns_serv': '8.8.8.8',
                      'Verbose': False}
 
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
