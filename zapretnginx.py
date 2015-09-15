@@ -76,9 +76,8 @@ def __genereate():
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain,))
         edr_urls = cur.fetchall()
-        edr_ports = urlparse(edr_urls[0].strip()).scheme if edr_urls[0] else "http"
-        for edr_port in edr_ports:
-            conf_server = """server {
+        edr_port = urlparse(edr_urls[0].strip()).scheme if edr_urls[0] else "http"
+        conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
     resolver 8.8.8.8;
