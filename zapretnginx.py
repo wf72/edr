@@ -72,7 +72,7 @@ def __genereate():
             nginx_conf_file.write(conf_server + conf_location + conf_end)
 
     # для одиночных доменов, без урлов
-    cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s GROUP BY domain;", ('%://' + edr_domain,))
+    cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
     for edr_domain in domains:
