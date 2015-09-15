@@ -71,12 +71,12 @@ def __genereate():
 
             nginx_conf_file.write(conf_server + conf_location + conf_end)
 
-     # для одиночных доменов, без урлов
+    # для одиночных доменов, без урлов
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain,))
         edr_urls = cur.fetchall()
-        edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
+        edr_ports = urlparse(edr_urls[0].strip()).scheme if edr_urls[0] else "http"
         for edr_port in edr_ports:
             conf_server = """server {
     server_name %(domain)s;
