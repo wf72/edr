@@ -74,9 +74,13 @@ def __genereate():
     # для одиночных доменов, без урлов
     for edr_domain in domains:
         # Формируем секцию server
+        if not edr_domain:
+            continue
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain,))
         edr_urls = cur.fetchall()
-        edr_port = urlparse(edr_urls[0].strip()).scheme if edr_urls[0] else "http"
+        if not edr_urls:
+            continue
+        edr_port = urlparse(edr_urls[0][0]).strip().scheme if edr_urls[0][0] else "http"
         conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
