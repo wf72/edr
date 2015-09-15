@@ -83,17 +83,17 @@ def __genereate():
     resolver 8.8.8.8;
 """ % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
             # Формирует location
-            conf_location += """    location / {
+        conf_location = """    location / {
         proxy_pass %s;
                 }
 """ % (__edr.config('URLS')['nginx_stop_url'])
 
         # Закрываем настройки сервера
-            conf_end = """}
+        conf_end = """}
 """
-            __edr.printt(conf_server + conf_location + conf_end)
+        __edr.printt(conf_server + conf_location + conf_end)
 
-            nginx_conf_file.write(conf_server + conf_location + conf_end)
+        nginx_conf_file.write(conf_server + conf_location + conf_end)
 
     nginx_conf_file.close()
 
