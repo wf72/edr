@@ -165,8 +165,10 @@ def UpdateTable():
     printt("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
+    printt("XML parse")
     xmlfile = etree.parse(work_dir + 'dump.xml')
     xmlroot = xmlfile.getroot()
+    printt("XML parse loop")
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
@@ -276,19 +278,24 @@ def getResult(code):
 def exportIp(file):
     """Пишем данные в файл"""
     if str2bool(config('Main')['export_ip_file']):
-        printt("Пишем данные в файл")
+        printt("Data prepare")
         zf = zipfile.ZipFile(file, 'r')
+        printt("Zip extract")
         zf.extractall(work_dir)
         zf.close()
+        printt("XML Parse Start")
         xmlfile = minidom.parse(work_dir + 'dump.xml')
+        printt("XML gets by tag IP")
         itemlist = xmlfile.getElementsByTagName('ip')
         ipfile = open(path_IP_file, 'w')
         ips = []
         ips2 = []
+        printt("First Loop Ip")
         for ip in itemlist:
             ips.append(ip.childNodes[0].nodeValue)
         ips2 += set(ips)
         ips2.sort()
+        printt("Write ip's to file")
         for ip in ips2:
             ipfile.write(ip + "\n")
         ipfile.close()
