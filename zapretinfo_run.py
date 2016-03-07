@@ -255,7 +255,7 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
     data = file.read()
     file.close()
     printt("Отправляем запрос с данными:")
-    printt(data)
+    #printt(data)
 
     sign = base64.b64encode(data)
 
