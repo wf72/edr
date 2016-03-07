@@ -269,8 +269,7 @@ def getResult(code):
     client = suds.client.Client(API_URL)
     result = client.service.getResult(code)
     printt("получен результат")
-    printt(
-        unicode((dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result))))
+    #printt(unicode((dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result))))
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
