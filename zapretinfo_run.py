@@ -260,7 +260,7 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
     data = req_file.read()
     req_file.close()
     xml = base64.b64encode(data)
-    file = open(signatureFile, "rb")
+    req_file = open(signatureFile, "rb")
     data = req_file.read()
     req_file.close()
     printt("Отправляем запрос с данными:")
