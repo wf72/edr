@@ -177,6 +177,9 @@ def UpdateTable():
             url = ""
             domain = ""
             ip = ""
+            ipfile = open(path_IP_file, 'w')
+            ips = []
+            ips2 = []
             idd = child.attrib['id'].encode('utf8')
             includeTime = child.attrib['includeTime'].replace('T', ' ')
             for child2 in child:
@@ -190,6 +193,7 @@ def UpdateTable():
                     domain = child2.text.strip().encode('utf8')
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
+                    ips.append(ip)
                 if not cur.execute(
                         "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
                         (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
@@ -200,6 +204,12 @@ def UpdateTable():
                     printt(
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
+                                printt("First Loop Ip")
+                if str2bool(config('Main')['export_ip_file']):
+                    printt("Write ip's to file")
+                    for ip in set(ips).sort():
+                        ipfile.write(ip + "\n")
+                    ipfile.close()
     con.commit()
     printt("DB update done")
 
@@ -278,7 +288,7 @@ def getResult(code):
 def exportIp(file):
     """Пишем данные в файл"""
     if str2bool(config('Main')['export_ip_file']):
-        printt("Data prepare")
+        printt("Data prepare for IP file")
         zf = zipfile.ZipFile(file, 'r')
         printt("Zip extract")
         zf.extractall(work_dir)
@@ -329,7 +339,7 @@ def start():
                 file = open(work_dir + 'result' + '.zip', "wb")
                 file.write(base64.b64decode(request['registerZipArchive']))
                 file.close()
-                exportIp(work_dir + 'result' + '.zip')
+                #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
                 zapretdelete_duple.main()
                 zapretbind.main()
