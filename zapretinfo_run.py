@@ -162,6 +162,11 @@ def CreateDB():
 
 
 def UpdateTable():
+    printt("Data prepare dump file")
+    zf = zipfile.ZipFile(file, 'r')
+    printt("Zip extract")
+    zf.extractall(work_dir)
+    zf.close()
     printt("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
