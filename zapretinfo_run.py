@@ -163,7 +163,7 @@ def CreateDB():
 
 def UpdateTable():
     printt("Data prepare dump file")
-    zf = zipfile.ZipFile(file, 'r')
+    zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
     printt("Zip extract")
     zf.extractall(work_dir)
     zf.close()
