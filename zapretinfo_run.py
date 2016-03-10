@@ -1,28 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 __author__ = 'wf'
-
-import suds
-import MySQLdb as db
+import ConfigParser
 import base64
-import time
-import zipfile
-import xml.etree.ElementTree as etree
-import os
-import sys
 import getopt
 import getpass
-import ConfigParser
+import os
+import sys
+import time
+import xml.etree.ElementTree as etree
+import zipfile
 from time import strftime
 from xml.dom import minidom
 
+import MySQLdb as db
+import suds
+
 import zapretbind
-import zapretnginx
 import zapretdelete_duple
+import zapretnginx
 
 
 def str2bool(value):
-    if type(value) == type(True):
+    if isinstance(value, bool):
         return value
     return True if value.lower() in ('true', 'yes', '1') else False
 
@@ -179,7 +179,6 @@ def UpdateTable():
             ip = ""
             ipfile = open(path_IP_file, 'w')
             ips = []
-            ips2 = []
             idd = child.attrib['id'].encode('utf8')
             includeTime = child.attrib['includeTime'].replace('T', ' ')
             for child2 in child:
@@ -207,7 +206,7 @@ def UpdateTable():
 
                 if str2bool(config('Main')['export_ip_file']):
                     printt("Write ip's to file")
-                    for ip in set(ips).sort():
+                    for ip in set(ips):
                         ipfile.write(ip + "\n")
                     ipfile.close()
     con.commit()
@@ -257,15 +256,15 @@ def getLastDumpDate():
 
 def sendRequest(requestFile, signatureFile, dumpformatversion):
     """Формируем и отправляем запрос на файл, в ответе код"""
-    file = open(requestFile, "rb")  # входные параметры фаил xml и подпись файла
-    data = file.read()
-    file.close()
+    req_file = open(requestFile, "rb")  # входные параметры фаил xml и подпись файла
+    data = req_file.read()
+    req_file.close()
     xml = base64.b64encode(data)
     file = open(signatureFile, "rb")
-    data = file.read()
-    file.close()
+    data = req_file.read()
+    req_file.close()
     printt("Отправляем запрос с данными:")
-    #printt(data)
+    # printt(data)
 
     sign = base64.b64encode(data)
 
