@@ -174,6 +174,8 @@ def UpdateTable():
     xmlfile = etree.parse(work_dir + 'dump.xml')
     xmlroot = xmlfile.getroot()
     printt("XML parse loop")
+    ipfile = open(path_IP_file, 'w')
+    ips = []
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
@@ -182,8 +184,6 @@ def UpdateTable():
             url = ""
             domain = ""
             ip = ""
-            ipfile = open(path_IP_file, 'w')
-            ips = []
             idd = child.attrib['id'].encode('utf8')
             includeTime = child.attrib['includeTime'].replace('T', ' ')
             for child2 in child:
@@ -209,11 +209,11 @@ def UpdateTable():
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
-            if str2bool(config('Main')['export_ip_file']):
-                printt("Write ip's to file")
-                for ip in set(ips):
-                    ipfile.write(ip + "\n")
-                ipfile.close()
+    if str2bool(config('Main')['export_ip_file']):
+        printt("Write ip's to file")
+        for ip in set(ips):
+            ipfile.write(ip + "\n")
+        ipfile.close()
     con.commit()
     printt("DB update done")
 
