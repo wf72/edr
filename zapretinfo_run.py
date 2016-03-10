@@ -204,7 +204,7 @@ def UpdateTable():
                     printt(
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
-                                printt("First Loop Ip")
+
                 if str2bool(config('Main')['export_ip_file']):
                     printt("Write ip's to file")
                     for ip in set(ips).sort():
