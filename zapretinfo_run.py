@@ -209,11 +209,11 @@ def UpdateTable():
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
-                if str2bool(config('Main')['export_ip_file']):
-                    printt("Write ip's to file")
-                    for ip in set(ips):
-                        ipfile.write(ip + "\n")
-                    ipfile.close()
+            if str2bool(config('Main')['export_ip_file']):
+                printt("Write ip's to file")
+                for ip in set(ips):
+                    ipfile.write(ip + "\n")
+                ipfile.close()
     con.commit()
     printt("DB update done")
 
