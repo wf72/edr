@@ -290,34 +290,6 @@ def getResult(code):
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
-def exportIp(file):
-    """Пишем данные в файл"""
-    if str2bool(config('Main')['export_ip_file']):
-        printt("Data prepare for IP file")
-        zf = zipfile.ZipFile(file, 'r')
-        printt("Zip extract")
-        zf.extractall(work_dir)
-        zf.close()
-        printt("XML Parse Start")
-        xmlfile = minidom.parse(work_dir + 'dump.xml')
-        printt("XML gets by tag IP")
-        itemlist = xmlfile.getElementsByTagName('ip')
-        ipfile = open(path_IP_file, 'w')
-        ips = []
-        ips2 = []
-        printt("First Loop Ip")
-        for ip in itemlist:
-            ips.append(ip.childNodes[0].nodeValue)
-        ips2 += set(ips)
-        ips2.sort()
-        printt("Write ip's to file")
-        for ip in ips2:
-            ipfile.write(ip + "\n")
-        ipfile.close()
-        LogWrite("Update done")
-        zabbix_status_write(1)
-
-
 def start():
     DeleteTrash()
     global cur, con
