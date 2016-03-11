@@ -1,28 +1,28 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 __author__ = 'wf'
-
-import suds
-import MySQLdb as db
+import ConfigParser
 import base64
-import time
-import zipfile
-import xml.etree.ElementTree as etree
-import os
-import sys
 import getopt
 import getpass
-import ConfigParser
+import os
+import sys
+import time
+import xml.etree.ElementTree as etree
+import zipfile
 from time import strftime
 from xml.dom import minidom
 
+import MySQLdb as db
+import suds
+
 import zapretbind
-import zapretnginx
 import zapretdelete_duple
+import zapretnginx
 
 
 def str2bool(value):
-    if type(value) == type(True):
+    if isinstance(value, bool):
         return value
     return True if value.lower() in ('true', 'yes', '1') else False
 
@@ -162,11 +162,20 @@ def CreateDB():
 
 
 def UpdateTable():
+    printt("Data prepare dump file")
+    zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
+    printt("Zip extract")
+    zf.extractall(work_dir)
+    zf.close()
     printt("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
+    printt("XML parse")
     xmlfile = etree.parse(work_dir + 'dump.xml')
     xmlroot = xmlfile.getroot()
+    printt("XML parse loop")
+    ipfile = open(path_IP_file, 'w')
+    ips = []
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
@@ -188,6 +197,7 @@ def UpdateTable():
                     domain = child2.text.strip().encode('utf8')
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
+                    ips.append(ip)
                 if not cur.execute(
                         "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
                         (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
@@ -198,6 +208,12 @@ def UpdateTable():
                     printt(
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
+
+    if str2bool(config('Main')['export_ip_file']):
+        printt("Write ip's to file")
+        for ip in set(ips):
+            ipfile.write(ip + "\n")
+        ipfile.close()
     con.commit()
     zabbix_status_write(1)
     printt("DB update done")
@@ -246,15 +262,15 @@ def getLastDumpDate():
 
 def sendRequest(requestFile, signatureFile, dumpformatversion):
     """Формируем и отправляем запрос на файл, в ответе код"""
-    file = open(requestFile, "rb")  # входные параметры фаил xml и подпись файла
-    data = file.read()
-    file.close()
+    req_file = open(requestFile, "rb")  # входные параметры фаил xml и подпись файла
+    data = req_file.read()
+    req_file.close()
     xml = base64.b64encode(data)
-    file = open(signatureFile, "rb")
-    data = file.read()
-    file.close()
+    req_file = open(signatureFile, "rb")
+    data = req_file.read()
+    req_file.close()
     printt("Отправляем запрос с данными:")
-    printt(data)
+    # printt(data)
 
     sign = base64.b64encode(data)
 
@@ -270,27 +286,31 @@ def getResult(code):
     client = suds.client.Client(API_URL)
     result = client.service.getResult(code)
     printt("получен результат")
-    printt(
-        unicode((dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result))))
+    #printt(unicode((dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result))))
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
 def exportIp(file):
     """Пишем данные в файл"""
     if str2bool(config('Main')['export_ip_file']):
-        printt("Пишем данные в файл")
+        printt("Data prepare for IP file")
         zf = zipfile.ZipFile(file, 'r')
+        printt("Zip extract")
         zf.extractall(work_dir)
         zf.close()
+        printt("XML Parse Start")
         xmlfile = minidom.parse(work_dir + 'dump.xml')
+        printt("XML gets by tag IP")
         itemlist = xmlfile.getElementsByTagName('ip')
         ipfile = open(path_IP_file, 'w')
         ips = []
         ips2 = []
+        printt("First Loop Ip")
         for ip in itemlist:
             ips.append(ip.childNodes[0].nodeValue)
         ips2 += set(ips)
         ips2.sort()
+        printt("Write ip's to file")
         for ip in ips2:
             ipfile.write(ip + "\n")
         ipfile.close()
@@ -324,7 +344,7 @@ def start():
                 file = open(work_dir + 'result' + '.zip', "wb")
                 file.write(base64.b64decode(request['registerZipArchive']))
                 file.close()
-                exportIp(work_dir + 'result' + '.zip')
+                #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
                 zapretdelete_duple.main()
                 zapretbind.main()
