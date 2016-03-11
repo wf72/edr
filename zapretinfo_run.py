@@ -199,6 +199,7 @@ def UpdateTable():
                         ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                          (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
     con.commit()
+    zabbix_status_write(1)
     printt("DB update done")
 
 
