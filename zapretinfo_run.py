@@ -211,7 +211,9 @@ def UpdateTable():
 
     if str2bool(config('Main')['export_ip_file']):
         printt("Write ip's to file")
+        printt(ips)
         for ip in set(ips):
+            printt(ip)
             ipfile.write(ip + "\n")
         ipfile.close()
     con.commit()
