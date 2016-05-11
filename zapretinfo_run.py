@@ -163,17 +163,22 @@ def CreateDB():
 
 def UpdateTable():
     printt("Data prepare dump file")
+    LogWrite("Data prepare dump file")
     zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
     printt("Zip extract")
+    LogWrite("Zip extract")
     zf.extractall(work_dir)
     zf.close()
     printt("Обновляем базу")
+    LogWrite("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
     printt("XML parse")
+    LogWrite("XML parse")
     xmlfile = etree.parse(work_dir + 'dump.xml')
     xmlroot = xmlfile.getroot()
     printt("XML parse loop")
+    LogWrite("XML parse loop")
     ipfile = open(path_IP_file, 'w')
     ips = []
     for child in xmlroot:
@@ -211,6 +216,7 @@ def UpdateTable():
 
     if str2bool(config('Main')['export_ip_file']):
         printt("Write ip's to file")
+        LogWrite("Write ip's to file")
         printt(ips)
         for ip in set(ips):
             printt(ip)
@@ -219,6 +225,7 @@ def UpdateTable():
     con.commit()
     zabbix_status_write(1)
     printt("DB update done")
+    LogWrite("DB update done")
 
 
 def DeleteTrash():
@@ -246,9 +253,11 @@ def zabbix_status_write(status):
         if status:
             zb_file.write("1\n")
             printt("Writing to zb_status 1")
+        LogWrite("Writing to zb_status 1")
         else:
             zb_file.write("0\n")
             printt("Writing to zb_status 0")
+            LogWrite("Writing to zb_status 0")
         zb_file.close()
 
 
@@ -258,7 +267,9 @@ def getLastDumpDate():
     client = suds.client.Client(API_URL)
     result = client.service.getLastDumpDate()
     printt("Результат:")
+    LogWrite("Результат:")
     printt(unicode(result))
+    LogWrite(unicode(result))
     return result
 
 
@@ -272,6 +283,7 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
     data = req_file.read()
     req_file.close()
     printt("Отправляем запрос с данными:")
+    LogWrite("Отправляем запрос с данными:")
     # printt(data)
 
     sign = base64.b64encode(data)
@@ -285,9 +297,11 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
 def getResult(code):
     """скачиваем фаил"""
     printt("скачиваем файл ")
+    LogWrite("скачиваем файл ")
     client = suds.client.Client(API_URL)
     result = client.service.getResult(code)
     printt("получен результат")
+    LogWrite("получен результат")
     #printt(unicode((dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result))))
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
@@ -309,12 +323,17 @@ def start():
         printt('LastDumpDate %s' % date_file)
         printt('Trying to get result...')
         printt('sleep 60 sec')
+        LogWrite('Got code %s' % code)
+        LogWrite('LastDumpDate %s' % date_file)
+        LogWrite('Trying to get result...')
+        LogWrite('sleep 60 sec')
         time.sleep(60)
         while 1:
             request = getResult(code)  # Пытаемся получить архив по коду
             if request['result']:
                 # Архив получен, скачиваем его и распаковываем
                 printt('Got it!')
+                LogWrite('Got it!')
                 file = open(work_dir + 'result' + '.zip', "wb")
                 file.write(base64.b64decode(request['registerZipArchive']))
                 file.close()
@@ -331,6 +350,8 @@ def start():
                     # Если это сообщение об обработке запроса, то просто ждем минутку.
                     printt('Not ready yet.')
                     printt('sleep 180 sec')
+                    LogWrite('Not ready yet.')
+                    LogWrite('sleep 180 sec')
                     time.sleep(180)
                 else:
                     # Если это любая другая ошибка, выводим ее и прекращаем работу

@@ -24,7 +24,7 @@ def __validateurl(line):
     ban = 0
     if not line:
         return
-    __edr.LogWrite('Reques: %s' % line)
+    #__edr.LogWrite('Reques: %s' % line)
     llist = line.split(' ')
     url = urlparse(llist[0].strip())
     cur.execute('SELECT url from edrdata where domain=%s and disabled=0',
@@ -38,10 +38,10 @@ def __validateurl(line):
             ban = 1
 
     if not ban:
-        __edr.LogWrite("Url passed: %s ip: %s" % (tuple(llist[:2]), ''))
+        #__edr.LogWrite("Url passed: %s ip: %s" % (tuple(llist[:2]), ''))
         return llist[0].strip() + "\n"
     else:
-        __edr.LogWrite("Url blocked: %s ip: %s" % (tuple(llist[:2]), ''))
+        #__edr.LogWrite("Url blocked: %s ip: %s" % (tuple(llist[:2]), ''))
         return __edr.STOP_URL + "\n"
 
 
