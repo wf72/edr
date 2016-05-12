@@ -253,7 +253,7 @@ def zabbix_status_write(status):
         if status:
             zb_file.write("1\n")
             printt("Writing to zb_status 1")
-        LogWrite("Writing to zb_status 1")
+            LogWrite("Writing to zb_status 1")
         else:
             zb_file.write("0\n")
             printt("Writing to zb_status 0")
