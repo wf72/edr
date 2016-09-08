@@ -101,6 +101,7 @@ def LogWrite(message):
 
 
 def DBConnect():
+    global cur, con
     try:
         printt("Start connecting to DB")
         con = db.connect(**config('DBConfig'))
@@ -215,14 +216,12 @@ def UpdateTable():
                     #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
-            query = query + ("""INSERT edrdata SET includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
+                    cur.execute("""INSERT edrdata SET includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
                 decOrg='%(decOrg)s', url='%(url)s', domain='%(domain)s', ip='%(ip)s', id='%(idd)s', disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
                 decOrg='%(decOrg)s', url='%(url)s', domain='%(domain)s', ip='%(ip)s', id='%(idd)s', disabled=0; \n
-                """ % {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
+                """, {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
-            printt(query)
-            cur.execute(query)
             con.commit()
 
     if str2bool(config('Main')['export_ip_file']):
@@ -319,8 +318,7 @@ def getResult(code):
 
 def start():
     DeleteTrash()
-    global cur, con
-    con, cur = DBConnect()
+    DBConnect()
 
     date_file = getLastDumpDate()
     zabbix_status_write(0)
