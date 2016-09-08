@@ -182,7 +182,6 @@ def UpdateTable():
     LogWrite("XML parse loop")
     ipfile = open(path_IP_file, 'w')
     ips = []
-    query = ""
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
