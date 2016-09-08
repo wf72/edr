@@ -181,6 +181,7 @@ def UpdateTable():
     LogWrite("XML parse loop")
     ipfile = open(path_IP_file, 'w')
     ips = []
+    query = ""
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
@@ -203,16 +204,24 @@ def UpdateTable():
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
                     ips.append(ip)
-                if not cur.execute(
-                        "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
-                        (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
-                    cur.execute(
-                        "INSERT edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
-                        (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd))
-                    printt("Добавляем новое значение: ")
-                    printt(
-                        ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
-                         (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
+                #if not cur.execute(
+                    #     "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
+                    #     (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
+                    # cur.execute(
+                    #     "INSERT edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
+                    #     (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd))
+                    # printt("Добавляем новое значение: ")
+                    # printt(
+                    #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
+                    #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
+                query = query + ("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNum)s,
+                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(id)s, disabled=0 ON DUPLICATE KEY UPDATE
+                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNum)s,
+                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(id)s, disabled=0; \n
+                """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                       'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': ip, 'idd': idd})
+                cur.execute(query)
+                con.commit()
 
     if str2bool(config('Main')['export_ip_file']):
         printt("Write ip's to file")

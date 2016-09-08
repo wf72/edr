@@ -31,7 +31,7 @@ def __genereate():
         for rec2 in data2:
             __edr.printt("first : %s" % rec)
             __edr.printt("second: %s" % rec2)
-            query = ("DELETE FROM edrdata WHERE url = %s;\n", edr_url)
+            query = query + ("DELETE FROM edrdata WHERE url = %s;\n", edr_url)
         __edr.printt("Deleted:\n %s" % query)
         cur.execute(query)
         con.commit()
