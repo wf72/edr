@@ -21,8 +21,8 @@ def __genereate():
     __edr.LogWrite('Remove duplicates')
     cur.execute("SELECT url FROM edrdata WHERE disabled=0;")
     data = cur.fetchall()
+    __edr.LogWrite('Remove duplicates. Loop.')
     for rec in data:
-        __edr.LogWrite('Remove duplicates. Loop.')
         edr_url = rec[0].strip()
         edr_url2 = edr_url+"/"
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url=%s", edr_url2)
