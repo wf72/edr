@@ -27,13 +27,14 @@ def __genereate():
         edr_url2 = edr_url+"/"
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url=%s", edr_url2)
         data2 = cur.fetchall()
+        query = ""
         for rec2 in data2:
             __edr.printt("first : %s" % rec)
             __edr.printt("second: %s" % rec2)
-            cur.execute("DELETE FROM edrdata WHERE url = %s;", edr_url)
-            con.commit()
-            __edr.printt("Deleted: %s" % edr_url)
-
+            query = ("DELETE FROM edrdata WHERE url = %s;\n", edr_url)
+        __edr.printt("Deleted:\n %s" % query)
+        cur.execute(query)
+        con.commit()
     __edr.LogWrite('Remove duplicates: End Loop. Start simple delete.')
     cur.execute("DELETE e1 FROM  edrdata e1, edrdata e2 WHERE e1.id > e2.id AND e1.url = e2.url;")
     con.commit()
