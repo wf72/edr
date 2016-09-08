@@ -216,7 +216,7 @@ def UpdateTable():
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
                 query = query + ("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNum)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(id)s, disabled=0 ON DUPLICATE KEY UPDATE
-                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNum)s,
+                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(id)s, disabled=0; \n
                 """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
                        'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': ip, 'idd': idd})
