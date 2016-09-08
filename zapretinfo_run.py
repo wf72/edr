@@ -154,6 +154,7 @@ def CreateDB():
         """ % config('DBConfig')['db']
         curcreate.execute(sqltext)
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
+        curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
         concreate.commit()
     except db.Error, e:
         try:
