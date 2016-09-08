@@ -17,6 +17,7 @@ def __genereate():
     Создаём файл настроек для bind
     :return:
     """
+    __edr.LogWrite("Genereate bind file")
     skip_domain = ['youtube.com', 'www.youtube.com']
     bind_file_path = __edr.config('Dirs')['bind_file']
     bind_file = open(bind_file_path, 'w')

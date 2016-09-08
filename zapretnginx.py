@@ -16,9 +16,10 @@ def __start():
 
 def __genereate():
     """
-    Создаём файл настроек для bind
+    Создаём файл настроек для nginx
     :return:
     """
+    __edr.LogWrite("Genereate nginx file")
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     nginx_conf_file = open(nginx_conf_file_path, 'w')
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
