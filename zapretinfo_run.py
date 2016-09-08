@@ -221,7 +221,7 @@ def UpdateTable():
                 """ % {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
                 cur.execute(query)
-                con.commit()
+                #con.commit()
 
     if str2bool(config('Main')['export_ip_file']):
         printt("Write ip's to file")
