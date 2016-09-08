@@ -204,7 +204,7 @@ def UpdateTable():
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
                     ips.append(ip)
-                #if not cur.execute(
+                    #if not cur.execute(
                     #     "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
                     #     (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
                     # cur.execute(
@@ -214,15 +214,16 @@ def UpdateTable():
                     # printt(
                     #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
-                query = query + ("""INSERT edrdata SET includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
+
+            query = query + ("""INSERT edrdata SET includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
                 decOrg='%(decOrg)s', url='%(url)s', domain='%(domain)s', ip='%(ip)s', id='%(idd)s', disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime='%(includeTime)s', decDate='%(decDate)s', decNum='%(decNumber)s',
                 decOrg='%(decOrg)s', url='%(url)s', domain='%(domain)s', ip='%(ip)s', id='%(idd)s', disabled=0; \n
                 """ % {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
-                printt(query)
-                cur.execute(query)
-                con.commit()
+            printt(query)
+            cur.execute(query)
+            con.commit()
 
     if str2bool(config('Main')['export_ip_file']):
         printt("Write ip's to file")
