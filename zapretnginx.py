@@ -89,7 +89,7 @@ def __genereate():
     server_name %(domain)s;
     listen %(port)s;
 """ % {'domain': edr_domain, 'port': '443' if edr_port == 'https' else '80'}
-            # Формирует location
+        # Формирует location
         conf_location = """    location / {
         proxy_pass %s;
                 }
@@ -113,4 +113,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

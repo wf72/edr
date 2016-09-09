@@ -352,6 +352,8 @@ def start():
                 zapretbind.main()
                 zapretnginx.main()
                 con.close()
+                LogWrite('It is Done!')
+                printt('It is Done!')
                 break
             else:
                 # Архив не получен, проверяем причину.
@@ -379,13 +381,13 @@ def start():
 
 def main(argv):
     config()
-
     try:
         opts, args = getopt.getopt(argv, "hcuv", ["createdb", "update", "verbose"])
     except getopt.GetoptError:
         print '-h for help'
         sys.exit(2)
-
+    startupdate = False
+    createdb = False
     for opt, arg in opts:
         if opt == '-h':
             print """--createdb or -c to create database
@@ -399,9 +401,14 @@ def main(argv):
             printt("Verbose mode on")
         elif opt in ("-u", "--update"):
             printt("Запускаем обмен")
-            start()
+            startupdate = True
         elif opt in ("-c", "--createdb"):
-            CreateDB()
+            createdb = True
+
+    if createdb:
+        CreateDB()
+    elif startupdate:
+        start()
 
 
 if __name__ == "__main__":
