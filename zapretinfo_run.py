@@ -200,8 +200,10 @@ def UpdateTable():
                     decOrg = child2.attrib['org'].encode('utf8')
                 elif child2.tag == 'url':
                     url = child2.text.strip().encode('utf8')
+                    url = domain if not url else url
                 elif child2.tag == 'domain':
                     domain = child2.text.strip().encode('utf8')
+                    url = domain if not url else url
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
                     ips.append(ip)
@@ -217,7 +219,6 @@ def UpdateTable():
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
                 else:
-                    url = domain if not url else url
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
