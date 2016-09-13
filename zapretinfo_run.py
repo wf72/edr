@@ -224,6 +224,12 @@ def UpdateTable():
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
                 """, {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
+                    printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
+                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
+                """ % {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
+                       'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
             con.commit()
 
     if str2bool(config('Main')['export_ip_file']):
