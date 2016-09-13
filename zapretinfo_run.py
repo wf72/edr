@@ -216,6 +216,8 @@ def UpdateTable():
                     #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
+                else:
+                    url = domain if not url else url
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
