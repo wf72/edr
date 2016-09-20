@@ -166,19 +166,29 @@ def CreateDB():
 def UpdateTable():
     printt("Data prepare dump file")
     LogWrite("Data prepare dump file")
-    zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
-    printt("Zip extract")
-    LogWrite("Zip extract")
-    zf.extractall(work_dir)
-    zf.close()
+    try:
+        zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
+        zf.extractall(work_dir)
+        printt("Zip extract")
+        LogWrite("Zip extract")
+    except zipfile.BadZipfile as E:
+        printt("Bad Zip File %s" % E )
+        start()
+    else:
+        zf.close()
     printt("Обновляем базу")
     LogWrite("Обновляем базу")
     cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
     printt("XML parse")
     LogWrite("XML parse")
-    xmlfile = etree.parse(work_dir + 'dump.xml')
-    xmlroot = xmlfile.getroot()
+    try:
+        xmlfile = etree.parse(work_dir + 'dump.xml')
+        xmlroot = xmlfile.getroot()
+    except etree.ElementTree.ParseError as E:
+        printt(E)
+        LogWrite(E)
+        start()
     printt("XML parse loop")
     LogWrite("XML parse loop")
     ipfile = open(path_IP_file, 'w')
