@@ -11,6 +11,7 @@ import time
 import xml.etree.ElementTree as etree
 import zipfile
 from time import strftime
+from pid.decorator import pidfile
 from xml.dom import minidom
 
 import MySQLdb as db
@@ -397,7 +398,7 @@ def start():
         zabbix_status_write(0)
         con.close()
 
-
+@pidfile()
 def main(argv):
     config()
     try:
