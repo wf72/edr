@@ -137,7 +137,8 @@ def CreateDB():
         `url` TEXT,
         `domain` VARCHAR(255),
         `ip` VARCHAR(255),
-        `disabled` TINYINT
+        `disabled` TINYINT,
+         INDEX (`url`(100),`domain`(50))
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
         CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
@@ -229,7 +230,7 @@ def UpdateTable():
                     #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
                     #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
-                else:
+                if url and ip and domain and decDate and decNumber and decOrg:
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
