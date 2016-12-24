@@ -138,8 +138,10 @@ def CreateDB():
         `domain` VARCHAR(255),
         `ip` VARCHAR(255),
         `disabled` TINYINT,
-         INDEX (`url`(100),`domain`(50))
+         PRIMARY KEY `id`,
+         INDEX (url(100), domain(50)),
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
+
         CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
@@ -156,7 +158,7 @@ def CreateDB():
         """ % config('DBConfig')['db']
         curcreate.execute(sqltext)
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
-        curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
+        #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
         concreate.commit()
     except db.Error, e:
         try:
