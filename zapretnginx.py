@@ -25,7 +25,6 @@ def __genereate():
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
-
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain + '/%',))
@@ -33,8 +32,9 @@ def __genereate():
         # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
         edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
         for edr_port in edr_ports:
-            cur.execute("""SELECT url FROM edrdata WHERE disabled=0 and url like %s;""",
-                        (edr_port + '://' + edr_domain + '/%'))
+            query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+                    (edr_port + '://' + edr_domain + '/%')
+            cur.execute(query)
             edr_urls = cur.fetchall()
             conf_server = """server {
     server_name %(domain)s;
@@ -64,14 +64,11 @@ def __genereate():
         proxy_pass http://$host;
                 }
 """
-
         # Закрываем настройки сервера
             conf_end = """}
 """
             __edr.printt(conf_server + conf_location + conf_end)
-
             nginx_conf_file.write(conf_server + conf_location + conf_end)
-
     # для одиночных доменов, без урлов
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
@@ -94,14 +91,11 @@ def __genereate():
         proxy_pass %s;
                 }
 """ % (__edr.config('URLS')['nginx_stop_url'])
-
         # Закрываем настройки сервера
         conf_end = """}
 """
         __edr.printt(conf_server + conf_location + conf_end)
-
         nginx_conf_file.write(conf_server + conf_location + conf_end)
-
     nginx_conf_file.close()
 
 
