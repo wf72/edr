@@ -149,8 +149,7 @@ def CreateDB():
         GRANT ALL PRIVILEGES ON %(db)s.* to '%(user)s'@'%%';
         FLUSH PRIVILEGES;""", {'user': config('DBConfig')['user'],
                                 'password': config('DBConfig')['passwd'],
-                                'db': config('DBConfig')['db']}
-
+                                'db': config('DBConfig')['db']})
         concreate.commit()
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
         #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
