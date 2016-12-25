@@ -127,10 +127,10 @@ def CreateDB():
         curcreate = concreate.cursor()
         printt("SET NAMES `utf8`;")
         curcreate.execute("SET NAMES `utf8`;")
-        printt("CREATE DATABASE IF NOT EXISTS %(db)s;" % {'db': config('DBConfig')['db']})
-        curcreate.execute("CREATE DATABASE IF NOT EXISTS %(db)s;", {'db': config('DBConfig')['db']})
-        printt("USE %(db)s;" % {'db': config('DBConfig')['db']})
-        curcreate.execute("USE %(db)s;", {'db': config('DBConfig')['db']})
+        sqltext = "CREATE DATABASE IF NOT EXISTS %(db)s;" % {'db': config('DBConfig')['db']}
+        curcreate.execute(sqltext)
+        sqltext= "USE %(db)s;" % {'db': config('DBConfig')['db']}
+        curcreate.execute(sqltext)
         sqltext = """CREATE TABLE IF NOT EXISTS edrdata (
         `id` INT NOT NULL,
         `includeTime` DATETIME,
