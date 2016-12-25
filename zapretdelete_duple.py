@@ -25,12 +25,12 @@ def __genereate():
     for rec in data:
         edr_url = rec[0].strip()
         edr_url2 = edr_url+"/"
-        cur.execute("""SELECT url FROM edrdata WHERE disabled=0 and url=%(edr_url2)s""", {"edr_url2":edr_url2})
+        cur.execute("""SELECT url FROM edrdata WHERE disabled=0 and url=%(edr_url2)s;""", {"edr_url2":edr_url2})
         data2 = cur.fetchall()
         for rec2 in data2:
             __edr.printt("first : %s" % rec)
             __edr.printt("second: %s" % rec2)
-            cur.execute("""DELETE FROM edrdata WHERE url = %(edr_url)s;\n""", {"edr_url2":edr_url})
+            cur.execute("""DELETE FROM edrdata WHERE url = %(edr_url)s;""", {"edr_url":edr_url})
     con.commit()
     __edr.LogWrite('Remove duplicates: End Loop. Start simple delete.')
     cur.execute("DELETE e1 FROM  edrdata e1, edrdata e2 WHERE e1.url = e2.url AND e1.id > e2.id;")
