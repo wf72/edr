@@ -125,10 +125,13 @@ def CreateDB():
         printt("Create DB on host: %s User: %s, Pass: %s" % (config('DBConfig')['host'], dbRootUser, dbRootPass))
         concreate = db.connect(host=config('DBConfig')['host'], user=dbRootUser, passwd=dbRootPass, db='mysql')
         curcreate = concreate.cursor()
+        printt("SET NAMES `utf8`;")
         curcreate.execute("SET NAMES `utf8`;")
+        printt("CREATE DATABASE IF NOT EXISTS %(db)s;" % {'db': config('DBConfig')['db']})
         curcreate.execute("CREATE DATABASE IF NOT EXISTS %(db)s;", {'db': config('DBConfig')['db']})
+        printt("USE %(db)s;" % {'db': config('DBConfig')['db']})
         curcreate.execute("USE %(db)s;", {'db': config('DBConfig')['db']})
-        curcreate.execute("""CREATE TABLE IF NOT EXISTS edrdata (
+        sqltext = """CREATE TABLE IF NOT EXISTS edrdata (
         `id` INT NOT NULL,
         `includeTime` DATETIME,
         `decDate` DATE,
@@ -140,8 +143,9 @@ def CreateDB():
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
          INDEX (url(100), domain(50)),
-        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;""")
-
+        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
+        printt(sqltext)
+        curcreate.execute(sqltext)
         curcreate.execute("""CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;""")
