@@ -125,10 +125,10 @@ def CreateDB():
         printt("Create DB on host: %s User: %s, Pass: %s" % (config('DBConfig')['host'], dbRootUser, dbRootPass))
         concreate = db.connect(host=config('DBConfig')['host'], user=dbRootUser, passwd=dbRootPass, db='mysql')
         curcreate = concreate.cursor()
-        sqltext = """SET NAMES `utf8`;
+        curcreate.execute("""SET NAMES `utf8`;
         CREATE DATABASE IF NOT EXISTS %(db)s;
-        USE %(db)s;
-        CREATE TABLE IF NOT EXISTS edrdata (
+        USE %(db)s;""", {'db': config('DBConfig')['db']})
+        curcreate.execute("""CREATE TABLE IF NOT EXISTS edrdata (
         `id` INT NOT NULL,
         `includeTime` DATETIME,
         `decDate` DATE,
@@ -138,28 +138,24 @@ def CreateDB():
         `domain` VARCHAR(255),
         `ip` VARCHAR(255),
         `disabled` TINYINT,
-         PRIMARY KEY `id`,
+         PRIMARY KEY (`id`),
          INDEX (url(100), domain(50)),
-        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
+        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;""")
 
-        CREATE TABLE IF NOT EXISTS version (
+        curcreate.execute("""CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
-        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;
-        CREATE USER '%(user)s'@'localhost' IDENTIFIED BY '%(password)s';
+        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;""")
+        curcreate.execute("""CREATE USER '%(user)s'@'localhost' IDENTIFIED BY '%(password)s';
         GRANT ALL PRIVILEGES ON %(db)s.* to '%(user)s'@'%%';
-        FLUSH PRIVILEGES;""" % {'user': config('DBConfig')['user'],
+        FLUSH PRIVILEGES;""", {'user': config('DBConfig')['user'],
                                 'password': config('DBConfig')['passwd'],
                                 'db': config('DBConfig')['db']}
-        printt(sqltext)
-        curcreate.execute(sqltext)
-        curcreate.close()
-        curcreate = concreate.cursor()
-        sqltext = """USE %s
-        """ % config('DBConfig')['db']
-        curcreate.execute(sqltext)
+
+        concreate.commit()
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
         #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
         concreate.commit()
+        curcreate.close()
     except db.Error, e:
         try:
             print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
