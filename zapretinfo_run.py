@@ -142,7 +142,7 @@ def CreateDB():
         `ip` VARCHAR(255),
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
-         INDEX (url(100), domain(50)),
+         INDEX (url(100), domain(50))
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
