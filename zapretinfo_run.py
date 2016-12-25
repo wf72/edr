@@ -146,14 +146,17 @@ def CreateDB():
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
-        curcreate.execute("""CREATE TABLE IF NOT EXISTS version (
+        sqltext = """CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
-        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;""")
-        curcreate.execute("""CREATE USER '%(user)s'@'localhost' IDENTIFIED BY '%(password)s';
+        ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
+        printt(sqltext)
+        curcreate.execute(sqltext)
+        sqltext = """CREATE USER '%(user)s'@'localhost' IDENTIFIED BY '%(password)s';
         GRANT ALL PRIVILEGES ON %(db)s.* to '%(user)s'@'%%';
-        FLUSH PRIVILEGES;""", {'user': config('DBConfig')['user'],
+        FLUSH PRIVILEGES;""" % {'user': config('DBConfig')['user'],
                                 'password': config('DBConfig')['passwd'],
-                                'db': config('DBConfig')['db']})
+                                'db': config('DBConfig')['db']}
+        curcreate.execute(sqltext)
         concreate.commit()
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
         #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
