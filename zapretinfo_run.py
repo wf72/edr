@@ -125,9 +125,9 @@ def CreateDB():
         printt("Create DB on host: %s User: %s, Pass: %s" % (config('DBConfig')['host'], dbRootUser, dbRootPass))
         concreate = db.connect(host=config('DBConfig')['host'], user=dbRootUser, passwd=dbRootPass, db='mysql')
         curcreate = concreate.cursor()
-        curcreate.execute("""SET NAMES `utf8`;
-        CREATE DATABASE IF NOT EXISTS %(db)s;
-        USE %(db)s;""", {'db': config('DBConfig')['db']})
+        curcreate.execute("SET NAMES `utf8`;")
+        curcreate.execute("CREATE DATABASE IF NOT EXISTS %(db)s;", {'db': config('DBConfig')['db']})
+        curcreate.execute("USE %(db)s;", {'db': config('DBConfig')['db']})
         curcreate.execute("""CREATE TABLE IF NOT EXISTS edrdata (
         `id` INT NOT NULL,
         `includeTime` DATETIME,
