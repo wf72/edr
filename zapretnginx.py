@@ -22,6 +22,7 @@ def __genereate():
     __edr.LogWrite("Genereate nginx file")
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     nginx_conf_file = open(nginx_conf_file_path, 'w')
+    __edr.LogWrite("block long url")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
@@ -70,6 +71,7 @@ def __genereate():
             __edr.printt(conf_server + conf_location + conf_end)
             nginx_conf_file.write(conf_server + conf_location + conf_end)
     # для одиночных доменов, без урлов
+    __edr.LogWrite("block domain")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
