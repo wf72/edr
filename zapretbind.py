@@ -29,9 +29,9 @@ def __genereate():
             if (edr_url[-1:].isalpha()):
                 write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (\
                 edr_url, __edr.config('Dirs')['bind_block_file']))
-            elif edr_url[-1:] == ".":
-                write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % ( \
-                edr_url[:-1], __edr.config('Dirs')['bind_block_file']))
+            #elif edr_url[-1:] == ".":
+            #    write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % ( \
+            #    edr_url[:-1], __edr.config('Dirs')['bind_block_file']))
             else:
                 continue
             bind_file.write(write_data)
