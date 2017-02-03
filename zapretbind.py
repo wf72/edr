@@ -3,6 +3,7 @@
 __author__ = 'wf'
 
 import zapretinfo_run as __edr
+from shutil import copyfile
 
 
 def __start():
@@ -20,7 +21,7 @@ def __genereate():
     __edr.LogWrite("Genereate bind file")
     skip_domain = ['youtube.com', 'www.youtube.com']
     bind_file_path = __edr.config('Dirs')['bind_file']
-    bind_file = open(bind_file_path, 'w')
+    bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     for rec in data:
@@ -37,6 +38,7 @@ def __genereate():
             bind_file.write(write_data)
     bind_file.close()
     con.close()
+    copyfile(bind_file_path+".tmp",bind_file_path)
 
 
 def main():

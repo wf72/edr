@@ -3,8 +3,9 @@
 __author__ = 'wf'
 
 from urlparse import urlparse
-
+from shutil import copyfile
 import zapretinfo_run as __edr
+
 
 
 def __start():
@@ -21,7 +22,7 @@ def __genereate():
     """
     __edr.LogWrite("Genereate nginx file")
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
-    nginx_conf_file = open(nginx_conf_file_path, 'w')
+    nginx_conf_file = open(nginx_conf_file_path+".tmp", 'w')
     __edr.LogWrite("block long url")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
@@ -99,7 +100,7 @@ def __genereate():
         __edr.printt(conf_server + conf_location + conf_end)
         nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
-
+    copyfile(nginx_conf_file_path+".tmp",nginx_conf_file_path)
 
 def main():
     if __edr.str2bool(__edr.config('Main')['nginx']):
