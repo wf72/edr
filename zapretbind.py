@@ -24,16 +24,13 @@ def __genereate():
     bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    for rec in data:
+    data2 = set([__edr.idnaconv(domain) for domain in data])
+    for rec in data2:
         edr_url = rec[0].strip()
-        if (not edr_url.lower() in skip_domain):
-            if (edr_url[-1:].isalpha()):
-                write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % ( \
-                    #__edr.idnaconv(edr_url), __edr.config('Dirs')['bind_block_file']))
+        if not edr_url.lower() in skip_domain:
+            if edr_url[-1:].isalpha():
+                write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
                     edr_url, __edr.config('Dirs')['bind_block_file']))
-            #elif edr_url[-1:] == ".":
-            #    write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % ( \
-            #    edr_url[:-1], __edr.config('Dirs')['bind_block_file']))
             else:
                 continue
             bind_file.write(write_data)
