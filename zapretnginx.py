@@ -59,7 +59,7 @@ def __genereate():
                 conf_location += """    location "%s" {
         proxy_pass %s;
                 }
-""" % (__edr.idnaconv(url_string), __edr.config('URLS')['nginx_stop_url'])
+""" % (url_string, __edr.config('URLS')['nginx_stop_url'])
             if not domain_block:
                 conf_location += """    location / {
         proxy_pass http://$host;
