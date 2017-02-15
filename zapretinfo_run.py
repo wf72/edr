@@ -24,6 +24,7 @@ import zapretnginx
 
 def idnaconv(url):
     if url:
+        printt("Converting: %s" % url)
         return url.strip().decode('utf-8').encode('idna')
     else:
         return url
