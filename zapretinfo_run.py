@@ -22,6 +22,12 @@ import zapretdelete_duple
 import zapretnginx
 
 
+def idnaconv(url):
+    if url:
+        return url.strip().decode('utf-8').encode('idna')
+    else:
+        return url
+
 def str2bool(value):
     if isinstance(value, bool):
         return value

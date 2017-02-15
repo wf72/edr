@@ -7,7 +7,6 @@ from shutil import copyfile
 import zapretinfo_run as __edr
 
 
-
 def __start():
     __edr.config()
     global con
@@ -42,7 +41,7 @@ def __genereate():
     server_name %(domain)s;
     listen %(port)s;
     resolver %(dns_serv)s;
-""" % {'domain': edr_domain.encode('idna'), 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('URLS')['dns_serv']}
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('URLS')['dns_serv']}
             # Формирует location
             conf_location = ""
             domain_block = 0
@@ -60,7 +59,7 @@ def __genereate():
                 conf_location += """    location "%s" {
         proxy_pass %s;
                 }
-""" % (url_string.encode('idna'), __edr.config('URLS')['nginx_stop_url'])
+""" % (__edr.idnaconv(url_string), __edr.config('URLS')['nginx_stop_url'])
             if not domain_block:
                 conf_location += """    location / {
         proxy_pass http://$host;
@@ -88,7 +87,7 @@ def __genereate():
         conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
-""" % {'domain': edr_domain.encode('idna'), 'port': '443' if edr_port == 'https' else '80'}
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80'}
         # Формирует location
         conf_location = """    location / {
         proxy_pass %s;
