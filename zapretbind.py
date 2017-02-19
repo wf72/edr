@@ -26,6 +26,7 @@ def __genereate():
     data = cur.fetchall()
     data2 = set([__edr.idnaconv(domain[0]) for domain in data])
     for rec in data2:
+        __edr.printt(rec)
         edr_url = rec.strip()
         if not edr_url.lower() in skip_domain:
             if edr_url[-1:].isalpha():
