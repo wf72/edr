@@ -65,24 +65,24 @@ def config(section=''):
         API_URL = Config.get('URLS', 'API_URL')
         STOP_URL = Config.get('URLS', 'STOP_URL')
 
-        if Config.get('Dirs', 'XML_FILE_NAME')[0] == "\":
+        if Config.get('Dirs', 'XML_FILE_NAME')[0] == "/":
             XML_FILE_NAME = Config.get('Dirs', 'XML_FILE_NAME')
         else:
             XML_FILE_NAME = work_dir + Config.get('Dirs', 'XML_FILE_NAME')
-        if Config.get('Dirs', 'SIG_FILE_NAME')[0] == "\":
+        if Config.get('Dirs', 'SIG_FILE_NAME')[0] == "/":
             SIG_FILE_NAME = work_dir + Config.get('Dirs', 'SIG_FILE_NAME')
         else:
             SIG_FILE_NAME = Config.get('Dirs', 'SIG_FILE_NAME')
         dumpFormatVersion = Config.get('Dirs', 'dumpFormatVersion')
-        if Config.get('Dirs', 'path_IP_file')[0] == "\":
+        if Config.get('Dirs', 'path_IP_file')[0] == "/":
             path_IP_file = work_dir + Config.get('Dirs', 'path_IP_file')
         else:
             path_IP_file = Config.get('Dirs', 'path_IP_file')
-        if Config.get('Dirs', 'filelog')[0] == "\":
+        if Config.get('Dirs', 'filelog')[0] == "/":
             filelog = Config.get('Dirs', 'filelog')
         else:
             filelog = work_dir + Config.get('Dirs', 'filelog')
-        if Config.get('Dirs', 'zabbix_status_file')[0] == "\":
+        if Config.get('Dirs', 'zabbix_status_file')[0] == "/":
             zabbix_status_file = work_dir + Config.get('Dirs', 'zabbix_status_file')
         else:
             zabbix_status_file = Config.get('Dirs', 'zabbix_status_file')
