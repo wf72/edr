@@ -24,9 +24,9 @@ def __genereate():
     bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain) for domain in data])
+    data2 = set([__edr.idnaconv(domain[0]) for domain in data])
     for rec in data2:
-        edr_url = rec[0].strip()
+        edr_url = rec.strip()
         if not edr_url.lower() in skip_domain:
             if edr_url[-1:].isalpha():
                 write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
