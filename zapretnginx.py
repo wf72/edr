@@ -41,7 +41,7 @@ def __genereate():
     server_name %(domain)s;
     listen %(port)s;
     resolver %(dns_serv)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('URLS')['dns_serv']}
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('Main')['dns_serv']}
             # Формирует location
             conf_location = ""
             domain_block = 0
