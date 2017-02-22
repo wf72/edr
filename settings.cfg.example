@@ -6,6 +6,8 @@ zb_file = True
 max_url_check = 50
 # по каким словам или ключам определять страницу блокировки
 find_words = ["Доступ закрыт", "Доступ ограничен", "Доступ запрещён"]
+# Время ожидания ответа при проверке блокировки
+check_timeout = 5
 
 [URLS]
 API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl

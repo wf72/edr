@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'wf'
+# __author__ = 'wf'
 
-import zapretinfo_run as __edr
+import socket
 import urllib2
 import csv
-import socket
+import zapretinfo_run as __edr
 
 
 def __start():
@@ -13,6 +13,7 @@ def __start():
 
 
 def checkblockedsites():
+    """Возвращает 1, если есть не заблокированные сайты. Используется для zabbix."""
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
     result = []
@@ -28,28 +29,31 @@ def checkblockedsites():
                 url = "http://%s" % url
             try:
                 count += 1
-                answer = urllib2.urlopen(url, timeout=5)
+                answer = urllib2.urlopen(url, timeout=__edr.config('Main')['check_timeout'])
                 tmpanswer = answer.read(100)
                 if max(word in tmpanswer for word in __edr.config('Main')['find_words']):
-                    #print("Url %(url)s blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
+                    # print("Url %(url)s blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
                     continue
                 else:
-                    print("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
+                    __edr.printt("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
+                    __edr.LogWrite("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
                     result.append(url)
             except urllib2.URLError as e:
-                print "There was an error: %r" % e
+                __edr.printt("There was an error: %r" % e)
                 errors.append(url)
             except socket.timeout as e:
-                print "There was an error: %r" % e
+                __edr.printt("There was an error: %r" % e)
                 errors.append(url)
-
-
-    print("result: %s" % result)
-    print("errors: %s" % errors)
+        __edr.printt("result: %s" % result)
+    __edr.LogWrite("result: %s" % result)
+    __edr.printt("errors: %s" % errors)
+    __edr.LogWrite("errors: %s" % errors)
+    return int(bool(result))
 
 
 
 def main():
+    __start()
     checkblockedsites()
 
 
