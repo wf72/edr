@@ -3,6 +3,9 @@ export_ip_file = True
 Verbose = True
 log_write = True
 zb_file = True
+bind = True
+nginx = True
+dns_server = 8.8.8.8
 max_url_check = 50
 # по каким словам или ключам определять страницу блокировки
 find_words = ["Доступ закрыт", "Доступ ограничен", "Доступ запрещён"]
@@ -30,3 +33,5 @@ filelog = edr.log
 zabbix_status_file = zb_status
 bind_file = bind_file.conf
 zb_check_file = zb_check_status
+bind_block_file = /etc/namedb/master/bind_edr_block
+nginx_conf_file =/usr/share/edr/nginx_edr.conf
