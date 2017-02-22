@@ -54,7 +54,7 @@ def checkblockedsites():
                     continue
                 else:
                     __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
-                    __edr.LogWrite("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
+                    __edr.LogWrite("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
                     result.append(url)
             except urllib2.URLError as e:
                 __edr.printt("There was an error: %r With: %s " % (e,url))
