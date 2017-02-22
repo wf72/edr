@@ -82,12 +82,6 @@ def config(section=''):
             filelog = Config.get('Dirs', 'filelog')
         else:
             filelog = work_dir + Config.get('Dirs', 'filelog')
-
-        if Config.get('Dirs', 'filelog_check')[0] == "/":
-            filelog_check = Config.get('Dirs', 'filelog_check')
-        else:
-            filelog_check = work_dir + Config.get('Dirs', 'filelog_check')
-
         if Config.get('Dirs', 'zabbix_status_file')[0] == "/":
             zabbix_status_file = Config.get('Dirs', 'zabbix_status_file')
         else:
@@ -129,6 +123,8 @@ def LogWrite(message,type = ""):
     """Write logs"""
     if type == "zb_check":
         filelog_local = config('Dirs')['zb_check_file']
+    else:
+        filelog_local = filelog
     filelog_local = log_file or filelog
     if str2bool(config('Main')['log_write']):
         log = open(filelog_local, 'a')
