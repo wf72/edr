@@ -112,7 +112,7 @@ def config(section=''):
                         dict1[option] = work_dir + Config.get(section, option)
                 if dict1[option] == -1:
                     printt("skip: %s" % option)
-            except:
+            except SystemError as e:
                 printt("exception on %s!" % option)
                 dict1[option] = None
 

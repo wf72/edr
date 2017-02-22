@@ -17,11 +17,7 @@ def zabbix_check_status_write(status):
     """Пишем статус проверки в файл, для zabbix"""
     work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
     if __edr.config('Dirs')['zb_check_file']:
-        if __edr.config('Dirs')['zabbix_status_file'][0] == "/":
-            zb_check_status_file = __edr.config('Dirs')['zb_check_file']
-        else:
-            zb_check_status_file = work_dir + __edr.config('Dirs')['zb_check_file']
-
+        zb_check_status_file = __edr.config('Dirs')['zb_check_file']
         zb_file = open(zb_check_status_file, "w")
         if status:
             zb_file.write("1\n")
