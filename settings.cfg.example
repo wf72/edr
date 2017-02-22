@@ -9,6 +9,7 @@ find_words = ["Доступ закрыт", "Доступ ограничен", "�
 # Время ожидания ответа при проверке блокировки
 check_timeout = 5
 
+
 [URLS]
 API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl
 STOP_URL = 302:http://zapret.example.net
@@ -28,3 +29,4 @@ path_IP_file = edr_ipfile.txt
 filelog = edr.log
 zabbix_status_file = zb_status
 bind_file = bind_file.conf
+zb_check_file = zb_check_status

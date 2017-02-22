@@ -5,6 +5,7 @@
 import socket
 import urllib2
 import csv
+import os
 import zapretinfo_run as __edr
 
 
@@ -12,8 +13,30 @@ def __start():
     __edr.config()
 
 
+def zabbix_check_status_write(status):
+    """Пишем статус проверки в файл, для zabbix"""
+    work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
+    if __edr.config('Dirs')['zb_check_file']:
+        if __edr.config('Dirs')['zabbix_status_file'][0] == "/":
+            zb_check_status_file = __edr.config('Dirs')['zb_check_file']
+        else:
+            zb_check_status_file = work_dir + __edr.config('Dirs')['zb_check_file']
+
+        zb_file = open(zb_check_status_file, "w")
+        if status:
+            zb_file.write("1\n")
+            __edr.printt("Writing to zb_check_file 1")
+            __edr.LogWrite("Writing to zb_check_file 1")
+        else:
+            zb_file.write("0\n")
+            __edr.printt("Writing to zb_check_file 0")
+            __edr.LogWrite("Writing to zb_check_file 0")
+        zb_file.close()
+
+
 def checkblockedsites():
     """Возвращает 1, если есть не заблокированные сайты. Используется для zabbix."""
+    __edr.LogWrite("Start check urls")
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
     result = []
@@ -32,7 +55,6 @@ def checkblockedsites():
                 answer = urllib2.urlopen(url, timeout=__edr.config('Main')['check_timeout'])
                 tmpanswer = answer.read(100)
                 if max(word in tmpanswer for word in __edr.config('Main')['find_words']):
-                    # print("Url %(url)s blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
                     continue
                 else:
                     __edr.printt("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
@@ -48,14 +70,13 @@ def checkblockedsites():
     __edr.LogWrite("result: %s" % result)
     __edr.printt("errors: %s" % errors)
     __edr.LogWrite("errors: %s" % errors)
+    __edr.LogWrite("Stop check urls")
     return int(bool(result))
-
 
 
 def main():
     __start()
     checkblockedsites()
-
 
 
 if __name__ == "__main__":
