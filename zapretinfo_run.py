@@ -82,6 +82,12 @@ def config(section=''):
             filelog = Config.get('Dirs', 'filelog')
         else:
             filelog = work_dir + Config.get('Dirs', 'filelog')
+
+        if Config.get('Dirs', 'filelog_check')[0] == "/":
+            filelog_check = Config.get('Dirs', 'filelog_check')
+        else:
+            filelog_check = work_dir + Config.get('Dirs', 'filelog_check')
+
         if Config.get('Dirs', 'zabbix_status_file')[0] == "/":
             zabbix_status_file = Config.get('Dirs', 'zabbix_status_file')
         else:
@@ -99,6 +105,11 @@ def config(section=''):
         for option in options:
             try:
                 dict1[option] = Config.get(section, option)
+                if section == 'Dirs':
+                    if Config.get(section, option)[0] == "/":
+                        dict1[option] = Config.get(section, option)
+                    else:
+                        dict1[option] = work_dir + Config.get(section, option)
                 if dict1[option] == -1:
                     printt("skip: %s" % option)
             except:
@@ -114,10 +125,13 @@ def printt(message):
         print message
 
 
-def LogWrite(message):
+def LogWrite(message,type = ""):
     """Write logs"""
+    if type == "zb_check":
+        filelog_local = config('Dirs')['zb_check_file']
+    filelog_local = log_file or filelog
     if str2bool(config('Main')['log_write']):
-        log = open(filelog, 'a')
+        log = open(filelog_local, 'a')
         log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
         log.close()
 
