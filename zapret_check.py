@@ -42,7 +42,7 @@ def checkblockedsites():
     result = []
     errors = []
     count = 0
-    max_count = __edr.config('Main')['max_url_check']
+    max_count = int(__edr.config('Main')['max_url_check'])
     for row in reader:
         if max_count <= count:
             break
