@@ -32,7 +32,7 @@ def zabbix_check_status_write(status):
 
 def checkblockedsites():
     """Возвращает 1, если есть не заблокированные сайты. Используется для zabbix."""
-    __edr.LogWrite("Start check urls")
+    __edr.LogWrite("Start check urls", "zb_check")
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
     result = []
@@ -54,7 +54,7 @@ def checkblockedsites():
                     continue
                 else:
                     __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
-                    __edr.LogWrite("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
+                    __edr.LogWrite("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer}, "zb_check")
                     result.append(url)
             except urllib2.URLError as e:
                 __edr.printt("There was an error: %r With: %s " % (e,url))
@@ -63,10 +63,10 @@ def checkblockedsites():
                 __edr.printt("There was an error: %r With: %s " % (e, url))
                 errors.append(url)
     __edr.printt("result: %s" % result)
-    __edr.LogWrite("result: %s" % result)
+    __edr.LogWrite("result: %s" % result, "zb_check")
     __edr.printt("errors: %s" % errors)
-    __edr.LogWrite("errors: %s" % errors)
-    __edr.LogWrite("Stop check urls")
+    __edr.LogWrite("errors: %s" % errors, "zb_check")
+    __edr.LogWrite("Stop check urls", "zb_check")
     zabbix_check_status_write(int(bool(result)))
     return int(bool(result))
 
