@@ -49,7 +49,7 @@ def checkblockedsites():
             try:
                 count += 1
                 answer = urllib2.urlopen(url, timeout=int(__edr.config('Main')['check_timeout']))
-                tmpanswer = answer.read(100)
+                tmpanswer = answer.read(300)
                 if max(word in tmpanswer for word in __edr.config('Main')['find_words'].split("|")):
                     continue
                 else:
