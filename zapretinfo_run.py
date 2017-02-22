@@ -125,7 +125,6 @@ def LogWrite(message,type = ""):
         filelog_local = config('Dirs')['zb_check_file']
     else:
         filelog_local = filelog
-    filelog_local = log_file or filelog
     if str2bool(config('Main')['log_write']):
         log = open(filelog_local, 'a')
         log.write(" %s : %s \n" % (strftime("%Y-%m-%d %H:%M:%S"), message))
