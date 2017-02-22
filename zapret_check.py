@@ -53,7 +53,7 @@ def checkblockedsites():
                 if max(word in tmpanswer for word in __edr.config('Main')['find_words'].split("|")):
                     continue
                 else:
-                    __edr.printt("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
+                    __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
                     __edr.LogWrite("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
                     result.append(url)
             except urllib2.URLError as e:
