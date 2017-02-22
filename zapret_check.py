@@ -61,10 +61,10 @@ def checkblockedsites():
                     __edr.LogWrite("Url %(url)s not blocked: %(answer)s" % {"url": url, "answer": tmpanswer})
                     result.append(url)
             except urllib2.URLError as e:
-                __edr.printt("There was an error: %r" % e)
+                __edr.printt("There was an error: %r With: %s " % (e,url)
                 errors.append(url)
             except socket.timeout as e:
-                __edr.printt("There was an error: %r" % e)
+                __edr.printt("There was an error: %r With: %s " % (e, url)
                 errors.append(url)
     __edr.printt("result: %s" % result)
     __edr.LogWrite("result: %s" % result)
