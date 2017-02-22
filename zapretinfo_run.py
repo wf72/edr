@@ -122,7 +122,7 @@ def printt(message):
 def LogWrite(message,type = ""):
     """Write logs"""
     if type == "zb_check":
-        filelog_local = config('Dirs')['zb_check_file']
+        filelog_local = config('Dirs')['filelog_check']
     else:
         filelog_local = filelog
     if str2bool(config('Main')['log_write']):
