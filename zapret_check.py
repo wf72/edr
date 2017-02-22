@@ -36,6 +36,7 @@ def zabbix_check_status_write(status):
 
 def checkblockedsites():
     """Возвращает 1, если есть не заблокированные сайты. Используется для zabbix."""
+    zabbix_check_status_write(0)
     __edr.LogWrite("Start check urls")
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
@@ -71,6 +72,7 @@ def checkblockedsites():
     __edr.printt("errors: %s" % errors)
     __edr.LogWrite("errors: %s" % errors)
     __edr.LogWrite("Stop check urls")
+    zabbix_check_status_write(int(bool(result)))
     return int(bool(result))
 
 
