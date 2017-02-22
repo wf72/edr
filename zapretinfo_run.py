@@ -89,7 +89,6 @@ def config(section=''):
         return
 
     elif section == 'DBConfig':
-
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),

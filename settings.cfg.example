@@ -3,6 +3,9 @@ export_ip_file = True
 Verbose = True
 log_write = True
 zb_file = True
+max_url_check = 50
+# по каким словам или ключам определять страницу блокировки
+find_words = ["Доступ закрыт", "Доступ ограничен", "Доступ запрещён"]
 
 [URLS]
 API_URL = http://vigruzki.rkn.gov.ru/services/OperatorRequest/?wsdl
