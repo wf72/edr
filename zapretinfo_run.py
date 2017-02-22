@@ -105,7 +105,7 @@ def config(section=''):
         for option in options:
             try:
                 dict1[option] = Config.get(section, option)
-                if section == 'Dirs':
+                if section == 'Dirs' and Config.get(section, option):
                     if Config.get(section, option)[0] == "/":
                         dict1[option] = Config.get(section, option)
                     else:
