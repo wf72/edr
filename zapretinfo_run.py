@@ -313,7 +313,7 @@ def DeleteTrash():
 
 def zabbix_status_write(status):
     """Пишем статус проверки в файл, для zabbix"""
-    if config('Dirs')['zb_file']:
+    if config('Main')['zb_file']:
         zb_file = open(zabbix_status_file, "w")
         if status:
             zb_file.write("1\n")
