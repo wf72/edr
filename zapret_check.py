@@ -66,7 +66,7 @@ def checkblockedsites():
             except socket.timeout as e:
                 __edr.printt("There was an error: %r" % e)
                 errors.append(url)
-        __edr.printt("result: %s" % result)
+    __edr.printt("result: %s" % result)
     __edr.LogWrite("result: %s" % result)
     __edr.printt("errors: %s" % errors)
     __edr.LogWrite("errors: %s" % errors)
