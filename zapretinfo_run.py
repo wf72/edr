@@ -237,8 +237,6 @@ def UpdateTable():
         start()
     printt("XML parse loop")
     LogWrite("XML parse loop")
-    ipfile = open(path_IP_file, 'w')
-    ips = []
     for child in xmlroot:
         if child.tag == 'content':
             decDate = ""
@@ -262,7 +260,6 @@ def UpdateTable():
                     url = "all://%s" % domain if not url else url
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
-                    ips.append(ip)
 
                 if url and ip and domain and decDate and decNumber and decOrg:
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
@@ -280,14 +277,6 @@ def UpdateTable():
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
             con.commit()
 
-    if str2bool(config('Main')['export_ip_file']):
-        printt("Write ip's to file")
-        LogWrite("Write ip's to file")
-        printt(ips)
-        for ip in set(ips):
-            printt(ip)
-            ipfile.write(ip + "\n")
-        ipfile.close()
     con.commit()
     zabbix_status_write(1)
     printt("DB update done")

@@ -1,5 +1,7 @@
 [Main]
 export_ip_file = True
+# Выгружать IP адреса указанные к блокировки без доменов
+export_clear_ip = True
 Verbose = True
 log_write = True
 zb_file = True
