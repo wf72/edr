@@ -246,23 +246,13 @@ def UpdateTable():
                     decOrg = child2.attrib['org'].encode('utf8')
                 elif child2.tag == 'url':
                     url = child2.text.strip().encode('utf8')
-                    url = domain if not url else url
+                    url = "all://%s" % domain if not url else url
                 elif child2.tag == 'domain':
                     domain = child2.text.strip().encode('utf8')
-                    url = domain if not url else url
+                    url = "all://%s" % domain if not url else url
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
                     ips.append(ip)
-                    #if not cur.execute(
-                    #     "UPDATE edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s,disabled=0 WHERE id=%s",
-                    #     (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)):
-                    # cur.execute(
-                    #     "INSERT edrdata SET includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
-                    #     (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd))
-                    # printt("Добавляем новое значение: ")
-                    # printt(
-                    #     ("includeTime=%s, decDate=%s, decNum=%s, decOrg=%s, url=%s, domain=%s,ip=%s, id=%s,disabled=0",
-                    #      (includeTime, decDate, decNumber, decOrg, url, domain, ip, idd)))
 
                 if url and ip and domain and decDate and decNumber and decOrg:
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
@@ -271,6 +261,7 @@ def UpdateTable():
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
                 """, {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
                        'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
+
                     printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,

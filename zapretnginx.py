@@ -25,7 +25,7 @@ def __genereate():
     __edr.LogWrite("block long url")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    domains = sorted(set([urlparse(url[0]).netloc for url in data]))
+    domains = set([urlparse(url[0]).netloc for url in data])
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain + '/%',))
