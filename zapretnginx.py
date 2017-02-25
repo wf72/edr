@@ -28,20 +28,26 @@ def __genereate():
     domains = set([urlparse(url[0]).netloc for url in data])
     for edr_domain in domains:
         # Формируем секцию server
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain + '/%',))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and  url like %s;", ('%://' + edr_domain + '%',))
         edr_urls = cur.fetchall()
-        # edr_ports = set(['443' if urlparse(i[0]).scheme == 'https' else '80' for i in edr_urls if i[0]])
         edr_ports = set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]])
         for edr_port in edr_ports:
             query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-                    (edr_port + '://' + edr_domain + '/%')
+                    (edr_port + '://' + edr_domain + '%')
             cur.execute(query)
             edr_urls = cur.fetchall()
+            if edr_port == "https":
+                port = '443'
+            elif edr_port = "http":
+                port = '80'
+            elif edr_port = "all":
+                port = "80;\nlisten 443;\n"
+            port = '443' if edr_port == 'https' else '80'
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
     resolver %(dns_serv)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80', 'dns_serv':  __edr.config('Main')['dns_serv']}
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': , 'dns_serv':  __edr.config('Main')['dns_serv']}
             # Формирует location
             conf_location = ""
             domain_block = 0
@@ -53,9 +59,6 @@ def __genereate():
                     domain_block = 1
                 if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
                     url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:]
-                    # if edr_url_temp[0].strip().__contains__(" ") and re.search('[А-Я]+', edr_url_temp[0]):
-                    #     url_string = quote(url_string).replace('%3D', '=') \
-                    #         .replace('%26', '&').replace('%23', '#').replace('%3F', '?')
                 conf_location += """    location "%s" {
         proxy_pass %s;
                 }
@@ -70,34 +73,6 @@ def __genereate():
 """
             __edr.printt(conf_server + conf_location + conf_end)
             nginx_conf_file.write(conf_server + conf_location + conf_end)
-    # для одиночных доменов, без урлов
-    __edr.LogWrite("block domain")
-    cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
-    data = cur.fetchall()
-    domains = sorted(set([urlparse(url[0]).netloc for url in data]))
-    for edr_domain in domains:
-        # Формируем секцию server
-        if not edr_domain:
-            continue
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
-        edr_urls = cur.fetchall()
-        if not edr_urls:
-            continue
-        edr_port = urlparse(edr_urls[0][0].strip()).scheme if edr_urls[0][0] else "http"
-        conf_server = """server {
-    server_name %(domain)s;
-    listen %(port)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': '443' if edr_port == 'https' else '80'}
-        # Формирует location
-        conf_location = """    location / {
-        proxy_pass %s;
-                }
-""" % (__edr.config('URLS')['nginx_stop_url'])
-        # Закрываем настройки сервера
-        conf_end = """}
-"""
-        __edr.printt(conf_server + conf_location + conf_end)
-        nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
     copyfile(nginx_conf_file_path+".tmp",nginx_conf_file_path)
 
