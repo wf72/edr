@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'wf'
+#__author__ = 'wf'
 
 from urlparse import urlparse
 from shutil import copyfile
