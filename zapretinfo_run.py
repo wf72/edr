@@ -10,9 +10,10 @@ import sys
 import time
 import xml.etree.ElementTree as etree
 import zipfile
+import string
 from time import strftime
 from pid.decorator import pidfile
-from xml.dom import minidom
+# from xml.dom import minidom
 
 import MySQLdb as db
 import suds
@@ -22,17 +23,26 @@ import zapretdelete_duple
 import zapretnginx
 
 
+def del_front_punctuation(params):
+    while params[0] in string.punctuation:
+        params = params[1:]
+    return params
+
+
 def idnaconv(url):
-    if url:
-        printt("Converting: %s" % url)
-        return url.strip().decode('utf-8').encode('idna')
+    tmp_url = del_front_punctuation(url)
+    if tmp_url:
+        printt("Converting: %s" % tmp_url)
+        return tmp_url.strip().decode('utf-8').encode('idna')
     else:
-        return url
+        return tmp_url
+
 
 def str2bool(value):
     if isinstance(value, bool):
         return value
     return True if value.lower() in ('true', 'yes', '1') else False
+
 
 def config(section=''):
     """ConfigParser"""
