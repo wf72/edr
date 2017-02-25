@@ -43,7 +43,7 @@ def __genereate():
             elif edr_port == "http":
                 port = '80'
             elif edr_port == "all":
-                port = "80;\nlisten 443;\n"
+                port = "80;\nlisten 443\n"
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
