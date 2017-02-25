@@ -38,16 +38,15 @@ def __genereate():
             edr_urls = cur.fetchall()
             if edr_port == "https":
                 port = '443'
-            elif edr_port = "http":
+            elif edr_port == "http":
                 port = '80'
-            elif edr_port = "all":
+            elif edr_port == "all":
                 port = "80;\nlisten 443;\n"
-            port = '443' if edr_port == 'https' else '80'
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
     resolver %(dns_serv)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': , 'dns_serv':  __edr.config('Main')['dns_serv']}
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': port, 'dns_serv':  __edr.config('Main')['dns_serv']}
             # Формирует location
             conf_location = ""
             domain_block = 0
