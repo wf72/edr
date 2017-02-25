@@ -21,6 +21,7 @@ import suds
 import zapretbind
 import zapretdelete_duple
 import zapretnginx
+import zapret_ipfile
 
 
 def del_front_punctuation(params):
@@ -393,6 +394,7 @@ def start():
                 file.close()
                 #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
+                zapret_ipfile.main()
                 zapretdelete_duple.main()
                 zapretbind.main()
                 zapretnginx.main()

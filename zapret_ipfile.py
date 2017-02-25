@@ -23,8 +23,8 @@ def __gen_ipfile():
         data = cur.fetchall()
         __edr.printt(data)
         for ip in data:
-            __edr.printt(ip)
-            ipfile.write(ip + "\n")
+            __edr.printt(ip[0])
+            ipfile.write(ip[0] + "\n")
         ipfile.close()
         copyfile(__edr.config('Dirs')['path_ip_file'] + ".tmp", __edr.config('Dirs')['path_ip_file'])
 
