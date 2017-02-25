@@ -35,11 +35,11 @@ def __genereate():
     __edr.LogWrite('Remove duplicates: End Loop. Start simple delete.')
     cur.execute("DELETE e1 FROM  edrdata e1, edrdata e2 WHERE e1.url = e2.url AND e1.id > e2.id;")
     con.commit()
-    __edr.LogWrite('Remove duplicates: Delete strange url.')
-    cur.execute('DELETE FROM  edrdata WHERE  url like "%?";')
-    con.commit()
-    cur.execute('DELETE FROM  edrdata WHERE  url like "%#";')
-    con.commit()
+    #__edr.LogWrite('Remove duplicates: Delete strange url.')
+    #cur.execute('DELETE FROM  edrdata WHERE  url like "%?";')
+    #con.commit()
+    #cur.execute('DELETE FROM  edrdata WHERE  url like "%#";')
+    #con.commit()
     con.close()
 
 
