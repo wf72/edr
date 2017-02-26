@@ -255,10 +255,10 @@ def UpdateTable():
                     decOrg = child2.attrib['org'].encode('utf8')
                 elif child2.tag == 'url':
                     url = child2.text.strip().encode('utf8')
-                    url = "all://%s" % domain if not url else url
+                    url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'domain':
                     domain = child2.text.strip().encode('utf8')
-                    url = "all://%s" % domain if not url else url
+                    url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'ip':
                     ip = child2.text.strip().encode('utf8')
 
