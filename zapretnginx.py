@@ -32,50 +32,54 @@ def __genereate():
         edr_urls = cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         for edr_port in edr_ports:
-            query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\' ORDER BY url;""" % \
-                    (edr_port + '://' + edr_domain + '/%')
-            cur.execute(query)
-            if "all" in edr_ports and edr_port <> "all":
+            if "all" in edr_ports and edr_port != "all":
                 continue
-            edr_urls = cur.fetchall()
             if edr_port == "https":
                 port = '443'
             elif edr_port == "http":
                 port = '80'
-            elif edr_port == "all":
+            else:
                 port = "80;\nlisten 443"
+
             conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
-    resolver %(dns_serv)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': port, 'dns_serv':  __edr.config('Main')['dns_serv']}
-            # Формирует location
-            conf_location = ""
-            domain_block = 0
-            url_string = "/"
-            for edr_url_temp in edr_urls:
-                edr_url = urlparse(edr_url_temp[0].strip())
-                # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
-                if (not edr_url.path) or (edr_url.path == '/'):
-                    domain_block = 1
-                if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
-                    url_string = edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:]
-                conf_location += """    location "%s" {
-        proxy_pass %s;
-                }
+""" % {'domain': __edr.idnaconv(edr_domain), 'port': port}
+        # Формирует location
+        conf_location = ""
+        domain_block = 0
+        url_string = "/"
+        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\' ORDER BY url;""" % \
+                ('%://' + edr_domain + '/%')
+        cur.execute(query)
+        edr_urls = cur.fetchall()
+        urls_to_write = set()
+        for edr_url_temp in edr_urls:
+            edr_url = urlparse(edr_url_temp[0].strip())
+            # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
+            if (not edr_url.path) or (edr_url.path == '/'):
+                domain_block = 1
+            if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
+                urls_to_write.add(edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:])
+        for url_string in urls_to_write:
+            conf_location += """    location "%s" {
+    proxy_pass %s;
+            }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
-            if not domain_block:
-                conf_location += """    location / {
-        proxy_pass http://$host;
-                }
+        if not domain_block:
+            conf_location += """    location / {
+    proxy_pass http://$host;
+            }
 """
         # Закрываем настройки сервера
-            conf_end = """}
-"""
-            __edr.printt(conf_server + conf_location + conf_end)
-            nginx_conf_file.write(conf_server + conf_location + conf_end)
+        conf_end = """    resolver %(dns_serv)s;
+        }
+""" % {'dns_serv':  __edr.config('Main')['dns_serv']}
+        __edr.printt(conf_server + conf_location + conf_end)
+        nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
-    copyfile(nginx_conf_file_path+".tmp",nginx_conf_file_path)
+    copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
+
 
 def main():
     if __edr.str2bool(__edr.config('Main')['nginx']):

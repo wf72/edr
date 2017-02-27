@@ -25,8 +25,8 @@ import zapret_ipfile
 
 
 def del_front_punctuation(params):
-    while params[0] in string.punctuation:
-        params = params[1:]
+    if params[0] in ".":
+        params = "*%s" % params
     return params
 
 
