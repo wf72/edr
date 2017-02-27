@@ -37,6 +37,7 @@ def checkblockedsites():
     reader = csv.reader(f, delimiter=';')
     result = []
     errors = []
+    blocked = []
     count = 0
     max_count = int(__edr.config('Main')['max_url_check'])
     for row in reader:
@@ -51,6 +52,7 @@ def checkblockedsites():
                 answer = urllib2.urlopen(url, timeout=int(__edr.config('Main')['check_timeout']))
                 tmpanswer = answer.read()
                 if max(word in tmpanswer for word in __edr.config('Main')['find_words'].split("|")):
+                    blocked.append(url)
                     continue
                 else:
                     __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
@@ -62,11 +64,12 @@ def checkblockedsites():
             except socket.timeout as e:
                 __edr.printt("There was an error: %r With: %s " % (e, url))
                 errors.append(url)
-    __edr.printt("result: %s" % result)
-    __edr.LogWrite("result: %s" % result, "zb_check")
-    __edr.printt("errors: %s" % errors)
-    __edr.LogWrite("errors: %s" % errors, "zb_check")
-    __edr.LogWrite("Stop check urls", "zb_check")
+    __edr.printt("===\nBlocked result: %s\n" % blocked)
+    __edr.printt("===\nNot blocked result: %s\n" % result)
+    __edr.printt("===\nWith errors: %s\n" % errors)
+    __edr.LogWrite("===\nBlocked result: %s\n" % blocked)
+    __edr.LogWrite("===\nNot blocked result: %s\n" % result)
+    __edr.LogWrite("===\nWith errors: %s\n" % errors)
     zabbix_check_status_write(int(bool(result)))
     return int(bool(result))
 
