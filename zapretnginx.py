@@ -60,7 +60,7 @@ def __genereate():
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
             if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
-                urls_to_write.add(edr_url_temp[0].strip()[(edr_url.scheme+edr_url.netloc).__len__()+3:])
+                urls_to_write.add(edr_url.path)
         for url_string in urls_to_write:
             conf_location += """    location "%s" {
     proxy_pass %s;
@@ -68,7 +68,7 @@ def __genereate():
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
         if not domain_block:
             conf_location += """    location / {
-    proxy_pass http://$host;
+        proxy_pass http://$host;
             }
 """
         # Закрываем настройки сервера
