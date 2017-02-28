@@ -25,12 +25,18 @@ def __genereate():
     __edr.LogWrite("block long url")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    domains = sorted(set([urlparse(url[0]).netloc for url in data]))
+    domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
         edr_urls = cur.fetchall()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
+        edr_urls += cur.fetchall()
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+                    ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
+        edr_urls += cur.fetchall()
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+                    ('%://' + __edr.idnaconv(edr_domain, True),))
         edr_urls += cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
