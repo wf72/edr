@@ -74,7 +74,7 @@ def __genereate():
                 domain_block = 1
                 break
 
-        for url_string in urls_to_write:
+        for url_string in sorted(urls_to_write):
             conf_location += """    location "%s" {
     proxy_pass %s;
             }
