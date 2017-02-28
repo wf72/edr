@@ -26,6 +26,7 @@ def __genereate():
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
+    conf_ports = ""
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
@@ -41,25 +42,32 @@ def __genereate():
             elif edr_port == "http":
                 port = '80'
             else:
-                port = "80;\nlisten 443"
+                port = "80;\n\tlisten 443"
+            conf_ports += "\tlisten %(port)s;\n" % {'port': port}
         conf_server = """server {
     server_name %(domain)s;
-    listen %(port)s;
-""" % {'domain': __edr.idnaconv(edr_domain), 'port': port}
+""" % {'domain': __edr.idnaconv(edr_domain)}
+        conf_server += conf_ports
         # Формирует location
         conf_location = ""
         domain_block = 0
-        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\' ORDER BY url;""" % \
+        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
                 ('%://' + edr_domain + '/%')
         cur.execute(query)
         edr_urls = cur.fetchall()
+        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+                ('%://' + edr_domain)
+        cur.execute(query)
+        edr_urls += cur.fetchall()
         urls_to_write = set()
-        for edr_url_temp in edr_urls:
+
+        for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
-            # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
+            urls_to_write.add(edr_url.path)
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
-            urls_to_write.add(edr_url.path)
+                break
+
         for url_string in urls_to_write:
             conf_location += """    location "%s" {
     proxy_pass %s;
