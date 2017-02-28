@@ -7,6 +7,7 @@ import urllib2
 import csv
 import os
 import zapretinfo_run as __edr
+from datetime import datetime
 
 
 def __start():
@@ -41,6 +42,8 @@ def checkblockedsites():
     count = 0
     max_count = int(__edr.config('Main')['max_url_check'])
     for row in reader:
+        if row[0] == datetime.now().strftime("%Y-%m-%d"):
+            continue
         if max_count <= count:
             break
         url = row[1] or row[2]

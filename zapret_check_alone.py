@@ -21,6 +21,8 @@ def checkblockedsites():
     count = 0
     max_count = 1000
     for row in reader:
+        if row[0] == datetime.now().strftime("%Y-%m-%d"):
+            continue
         if max_count <= count:
             break
         url = row[1] or row[2]
