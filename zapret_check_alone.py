@@ -5,14 +5,15 @@
 import socket
 import urllib2
 import csv
+from datetime import datetime
 
 
 def checkblockedsites():
     """Возвращает результаты ввиде спиской сайтов. Можно скомпилировать для запуска в консоли
     под windows."""
     print("Start check urls")
-    find_words = ['<title> Доступ Закрыт! - VHG! </title>','<title>Доступ закрыт</title>']
-    print("Tryiing to find: %s" % ";".join(find_words)  )
+    find_words = ['<title> Доступ Закрыт! - VHG! </title>', '<title>Доступ закрыт</title>']
+    print("Tryiing to find: %s" % ";".join(find_words))
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
     result = []
@@ -37,7 +38,8 @@ def checkblockedsites():
                     blocked.append(url)
                     continue
                 else:
-                    print("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
+                    print("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" %
+                          {"url": url, "answer": tmpanswer})
                     result.append(url)
             except urllib2.URLError as e:
                 print("There was an error: %r With: %s " % (e, url))

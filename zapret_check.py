@@ -5,7 +5,6 @@
 import socket
 import urllib2
 import csv
-import os
 import zapretinfo_run as __edr
 from datetime import datetime
 
@@ -16,7 +15,6 @@ def __start():
 
 def zabbix_check_status_write(status):
     """Пишем статус проверки в файл, для zabbix"""
-    work_dir = os.path.dirname(os.path.realpath(__file__)) + os.sep
     if __edr.config('Dirs')['zb_check_file']:
         zb_check_status_file = __edr.config('Dirs')['zb_check_file']
         zb_file = open(zb_check_status_file, "w")
@@ -58,11 +56,13 @@ def checkblockedsites():
                     blocked.append(url)
                     continue
                 else:
-                    __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer})
-                    __edr.LogWrite("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" % {"url": url, "answer": tmpanswer}, "zb_check")
+                    __edr.printt("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" %
+                                 {"url": url, "answer": tmpanswer})
+                    __edr.LogWrite("Url %(url)s not blocked: \n===start====\n%(answer)s\n===end===\n" %
+                                   {"url": url, "answer": tmpanswer}, "zb_check")
                     result.append(url)
             except urllib2.URLError as e:
-                __edr.printt("There was an error: %r With: %s " % (e,url))
+                __edr.printt("There was an error: %r With: %s " % (e, url))
                 errors.append(url)
             except socket.timeout as e:
                 __edr.printt("There was an error: %r With: %s " % (e, url))
