@@ -69,7 +69,7 @@ def __genereate():
 
         for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
-            urls_to_write.add(edr_url.path)
+            urls_to_write.add(edr_url.path or "/")
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
                 break
