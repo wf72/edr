@@ -26,7 +26,6 @@ def __genereate():
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([urlparse(url[0]).netloc for url in data]))
-    conf_ports = ""
     for edr_domain in domains:
         # Формируем секцию server
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
@@ -34,6 +33,7 @@ def __genereate():
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
+        conf_ports = ''
         for edr_port in edr_ports:
             if "all" in edr_ports and edr_port != "all":
                 continue
