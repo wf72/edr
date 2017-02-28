@@ -42,15 +42,13 @@ def __genereate():
                 port = '80'
             else:
                 port = "80;\nlisten 443"
-
-            conf_server = """server {
+        conf_server = """server {
     server_name %(domain)s;
     listen %(port)s;
 """ % {'domain': __edr.idnaconv(edr_domain), 'port': port}
         # Формирует location
         conf_location = ""
         domain_block = 0
-        url_string = "/"
         query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\' ORDER BY url;""" % \
                 ('%://' + edr_domain + '/%')
         cur.execute(query)
@@ -61,8 +59,7 @@ def __genereate():
             # domain_block = 0 if (edr_url.path and (not edr_url.path == '/')) else 1
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
-            if (edr_url.scheme+edr_url.netloc).__len__()+3 != edr_url_temp[0].strip().__len__():
-                urls_to_write.add(edr_url.path)
+            urls_to_write.add(edr_url.path)
         for url_string in urls_to_write:
             conf_location += """    location "%s" {
     proxy_pass %s;
