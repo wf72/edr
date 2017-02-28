@@ -86,6 +86,7 @@ def __genereate():
         nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
+    con.close()
 
 
 def main():

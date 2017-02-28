@@ -394,11 +394,11 @@ def start():
                 file.close()
                 #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable()
+                con.close()
                 zapret_ipfile.main()
                 zapretdelete_duple.main()
                 zapretbind.main()
                 zapretnginx.main()
-                con.close()
                 LogWrite('It is Done!')
                 printt('It is Done!')
                 break
