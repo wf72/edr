@@ -10,7 +10,7 @@ import sys
 import time
 import xml.etree.ElementTree as etree
 import zipfile
-import string
+#import string
 from time import strftime
 from pid.decorator import pidfile
 # from xml.dom import minidom
@@ -35,7 +35,7 @@ def idnaconv(url, reverse=False):
     if tmp_url:
         printt("Converting: %s" % tmp_url)
         if reverse:
-            return tmp_url.strip().decode('idna')
+            return tmp_url.strip().decode('utf-8').decode('idna')
         else:
             return tmp_url.strip().decode('utf-8').encode('idna')
     else:
