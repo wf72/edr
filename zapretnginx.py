@@ -89,7 +89,7 @@ def __genereate():
         conf_end = """    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
-        __edr.printt(conf_server + conf_location + conf_end)
+        __edr.printt("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
         nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
