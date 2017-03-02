@@ -155,8 +155,8 @@ def DBConnect():
         printt("Connecting done")
         cur.execute('SET NAMES `utf8`')
         return con, cur
-    except db.Error:
-        printt(con.error())
+    except db.Error as e:
+        printt(e)
 
 
 def CreateDB():
