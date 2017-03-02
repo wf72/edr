@@ -106,7 +106,8 @@ def config(section=''):
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
-                'db': Config.get('DBConfig', 'dbName'), }
+                'db': Config.get('DBConfig', 'dbName'),
+                'charset': 'utf-8'}
     else:
         dict1 = {}
         options = Config.options(section)

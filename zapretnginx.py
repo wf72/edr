@@ -32,6 +32,12 @@ def __genereate():
         edr_urls = cur.fetchall()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
+        cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+                    ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
+        edr_urls += cur.fetchall()
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+                    ('%://' + __edr.idnaconv(edr_domain, True),))
+        edr_urls += cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
         for edr_port in edr_ports:
