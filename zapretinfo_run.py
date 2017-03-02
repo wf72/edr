@@ -106,7 +106,8 @@ def config(section=''):
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
-                'db': Config.get('DBConfig', 'dbName'), }
+                'db': Config.get('DBConfig', 'dbName'),
+                'charset': 'utf8'}
     else:
         dict1 = {}
         options = Config.options(section)
@@ -154,8 +155,8 @@ def DBConnect():
         printt("Connecting done")
         cur.execute('SET NAMES `utf8`')
         return con, cur
-    except db.Error:
-        printt(con.error())
+    except db.Error as e:
+        printt(e)
 
 
 def CreateDB():
