@@ -34,15 +34,10 @@ def idnaconv(url, reverse=False):
     tmp_url = del_front_punctuation(url)
     if tmp_url:
         printt("Converting: %s" % tmp_url)
-        try:
-            if reverse:
-                return tmp_url.strip().decode('idna')
-            else:
-                return tmp_url.strip().decode('utf-8').encode('idna')
-        except UnicodeEncodeError as e:
-            print(e)
-            print("Cannot convert string %s, type %s" % (url, type(url)))
-            raise
+        if reverse:
+            return tmp_url.strip().decode('idna')
+        else:
+            return tmp_url.strip().decode('utf-8').encode('idna')
     else:
         return tmp_url
 
