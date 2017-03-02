@@ -33,7 +33,7 @@ def del_front_punctuation(params):
 def idnaconv(url, reverse=False):
     tmp_url = del_front_punctuation(url)
     if tmp_url:
-        printt("Converting: %s, type %s" % (tmp_url,type(tmp_url))
+        printt("Converting: %s, type %s" % (tmp_url, type(tmp_url)))
         if reverse:
             return tmp_url.strip().decode('idna')
         else:
