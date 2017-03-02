@@ -23,46 +23,46 @@ def __genereate():
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     nginx_conf_file = open(nginx_conf_file_path+".tmp", 'w')
     __edr.LogWrite("block long url")
-    cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
+    cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     for edr_domain in domains:
         # Формируем секцию server
-        cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 and url like %s;", (u'%://' + edr_domain + u'/%',))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + u'/%',))
         edr_urls = cur.fetchall()
-        cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 and url like %s;", (u'%://' + edr_domain,))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
-        cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                    (u'%://' + __edr.idnaconv(edr_domain, True) + u'/%',))
-        edr_urls += cur.fetchall()
-        cur.execute(u"SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                    (u'%://' + __edr.idnaconv(edr_domain, True),))
-        edr_urls += cur.fetchall()
+        # cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #             ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
+        # edr_urls += cur.fetchall()
+        # cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #             ('%://' + __edr.idnaconv(edr_domain, True),))
+        # edr_urls += cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
-        conf_ports = u''
+        conf_ports = ''
         for edr_port in edr_ports:
             if "all" in edr_ports and edr_port != "all":
                 continue
             if edr_port == "https":
-                port = u'443'
+                port = '443'
             elif edr_port == "http":
-                port = u'80'
+                port = '80'
             else:
-                port = u"80;\n\tlisten 443"
-            conf_ports += u"\tlisten %(port)s;\n" % {'port': port}
-        conf_server = u"""server {
+                port = "80;\n\tlisten 443"
+            conf_ports += "\tlisten %(port)s;\n" % {'port': port}
+        conf_server = """server {
     server_name %(domain)s;
 """ % {'domain': __edr.idnaconv(edr_domain)}
         conf_server += conf_ports
         # Формирует location
         conf_location = u""
         domain_block = 0
-        query = u"""SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-                (u'%://' + edr_domain + u'/%')
+        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+                ('%://' + edr_domain + u'/%')
         cur.execute(query)
         edr_urls = cur.fetchall()
-        query = u"""SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-                (u'%://' + edr_domain)
+        query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+                ('%://' + edr_domain)
         cur.execute(query)
         edr_urls += cur.fetchall()
         urls_to_write = set()
@@ -75,22 +75,22 @@ def __genereate():
                 break
 
         for url_string in sorted(urls_to_write):
-            conf_location += u"""    location "%s" {
+            conf_location += """    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
 
         if not domain_block:
-            conf_location += u"""    location / {
+            conf_location += """    location / {
         proxy_pass http://$host;
             }
 """
         # Закрываем настройки сервера
-        conf_end = u"""    resolver %(dns_serv)s;
+        conf_end = """    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
         __edr.printt(conf_server)
-        __edr.printt(conf_location)
+        __edr.printt(conf_location.decode('utf-8'))
         __edr.printt(conf_end)
         __edr.printt("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
         nginx_conf_file.write(conf_server + conf_location + conf_end)
