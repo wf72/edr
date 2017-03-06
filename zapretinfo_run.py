@@ -39,7 +39,7 @@ def idnaconv(url, reverse=False):
             return tmp_url.strip().decode('idna')
         else:
             printt("Result: %s" % tmp_url.strip().encode('idna'))
-            return tmp_url.strip().encode('idna')
+            return tmp_url.strip().decode('utf-8').encode('idna')
     else:
         printt("Result: %s" % tmp_url)
         return tmp_url
@@ -188,7 +188,7 @@ def CreateDB():
         `decOrg` VARCHAR(30),
         `url` TEXT,
         `domain` VARCHAR(255),
-        `ip` VARCHAR(255),
+        `ip` TEXT,
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
          INDEX (url(255), domain(50))
