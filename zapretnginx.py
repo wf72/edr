@@ -28,16 +28,16 @@ def __genereate():
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     for edr_domain in domains:
         # Формируем секцию server
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + u'/%',))
         edr_urls = cur.fetchall()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                    ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
-        edr_urls += cur.fetchall()
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                    ('%://' + __edr.idnaconv(edr_domain, True),))
-        edr_urls += cur.fetchall()
+        # cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #             ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
+        # edr_urls += cur.fetchall()
+        # cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #             ('%://' + __edr.idnaconv(edr_domain, True),))
+        # edr_urls += cur.fetchall()
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
         for edr_port in edr_ports:
@@ -55,10 +55,10 @@ def __genereate():
 """ % {'domain': __edr.idnaconv(edr_domain)}
         conf_server += conf_ports
         # Формирует location
-        conf_location = ""
+        conf_location = u""
         domain_block = 0
         query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-                ('%://' + edr_domain + '/%')
+                ('%://' + edr_domain + u'/%')
         cur.execute(query)
         edr_urls = cur.fetchall()
         query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
@@ -79,6 +79,7 @@ def __genereate():
     proxy_pass %s;
             }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
+
         if not domain_block:
             conf_location += """    location / {
         proxy_pass http://$host;
@@ -88,7 +89,10 @@ def __genereate():
         conf_end = """    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
-        __edr.printt(conf_server + conf_location + conf_end)
+        __edr.printt(conf_server)
+        __edr.printt(conf_location.decode('utf-8'))
+        __edr.printt(conf_end)
+        __edr.printt("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
         nginx_conf_file.write(conf_server + conf_location + conf_end)
     nginx_conf_file.close()
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)

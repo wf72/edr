@@ -10,7 +10,7 @@ import sys
 import time
 import xml.etree.ElementTree as etree
 import zipfile
-import string
+#import string
 from time import strftime
 from pid.decorator import pidfile
 # from xml.dom import minidom
@@ -33,12 +33,15 @@ def del_front_punctuation(params):
 def idnaconv(url, reverse=False):
     tmp_url = del_front_punctuation(url)
     if tmp_url:
-        printt("Converting: %s" % tmp_url)
+        printt("Converting: %s, type %s" % (tmp_url, type(tmp_url)))
         if reverse:
+            printt("Result: %s" % tmp_url.strip().decode('idna'))
             return tmp_url.strip().decode('idna')
         else:
-            return tmp_url.strip().decode('utf-8').encode('idna')
+            printt("Result: %s" % tmp_url.strip().encode('idna'))
+            return tmp_url.strip().encode('idna')
     else:
+        printt("Result: %s" % tmp_url)
         return tmp_url
 
 
@@ -106,7 +109,9 @@ def config(section=''):
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
-                'db': Config.get('DBConfig', 'dbName'), }
+                'db': Config.get('DBConfig', 'dbName'),
+                # 'charset': 'utf8'
+                }
     else:
         dict1 = {}
         options = Config.options(section)
@@ -154,8 +159,8 @@ def DBConnect():
         printt("Connecting done")
         cur.execute('SET NAMES `utf8`')
         return con, cur
-    except db.Error:
-        printt(con.error())
+    except db.Error as e:
+        printt(e)
 
 
 def CreateDB():
