@@ -3,6 +3,7 @@
 # __author__ = 'wf'
 
 from shutil import copyfile
+from ast import literal_eval
 import zapretinfo_run as __edr
 
 
@@ -21,7 +22,8 @@ def __gen_ipfile():
         __edr.printt(data)
         for ip in data:
             __edr.printt(ip[0])
-            ipfile.write(ip[0] + "\n")
+            for i in literal_eval(ip[0]):
+                ipfile.write("%s\n" % i)
         ipfile.close()
         copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
 
