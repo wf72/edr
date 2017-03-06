@@ -269,20 +269,22 @@ def UpdateTable():
                     url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'ip':
                     ip.add(child2.text.strip().encode('utf8').strip())
-                if url and ip and domain and decDate and decNumber and decOrg:
-                    cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
-                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
-                """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                       'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
+                    if not domain:
+                        domain = 'ip'
+            if url and ip and domain and decDate and decNumber and decOrg:
+                cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
+            includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
+            """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
 
-                    printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
-                includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-                decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
-                """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                       'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
+                printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
+            includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
+            """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
             con.commit()
 
     con.commit()
