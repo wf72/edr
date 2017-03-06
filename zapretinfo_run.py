@@ -186,7 +186,7 @@ def CreateDB():
         `ip` VARCHAR(255),
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
-         INDEX (url(100), domain(50))
+         INDEX (url(255), domain(50))
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
@@ -202,7 +202,7 @@ def CreateDB():
                                 'db': config('DBConfig')['db']}
         curcreate.execute(sqltext)
         concreate.commit()
-        curcreate.execute("INSERT INTO version SET `version`=%s", (0.2,))
+        curcreate.execute("INSERT INTO version SET `version`=%s", (0.3,))
         #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
         concreate.commit()
         curcreate.close()
@@ -248,37 +248,36 @@ def UpdateTable():
             decOrg = ""
             url = ""
             domain = ""
-            ip = ""
-            idd = child.attrib['id'].encode('utf8')
-            includeTime = child.attrib['includeTime'].replace('T', ' ')
+            ip = set()
+            idd = child.attrib['id'].encode('utf8').strip()
+            includeTime = child.attrib['includeTime'].replace('T', ' ').strip()
             for child2 in child:
                 if child2.tag == 'decision':
-                    decDate = child2.attrib['date'].encode('utf8')
-                    decNumber = child2.attrib['number'].encode('utf8')
-                    decOrg = child2.attrib['org'].encode('utf8')
+                    decDate = child2.attrib['date'].encode('utf8').strip()
+                    decNumber = child2.attrib['number'].encode('utf8').strip()
+                    decOrg = child2.attrib['org'].encode('utf8').strip()
                 elif child2.tag == 'url':
-                    url = child2.text.strip().encode('utf8')
+                    url = child2.text.strip().encode('utf8').strip()
                     url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'domain':
-                    domain = child2.text.strip().encode('utf8')
+                    domain = child2.text.strip().encode('utf8').strip()
                     url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'ip':
-                    ip = child2.text.strip().encode('utf8')
-
+                    ip.add(child2.text.strip().encode('utf8').strip())
                 if url and ip and domain and decDate and decNumber and decOrg:
                     cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
-                """, {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
-                       'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
+                """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                       'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
 
                     printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
                 includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
-                """ % {'includeTime': includeTime.strip(), 'decDate': decDate.strip(), 'decNumber': decNumber.strip(),
-                       'decOrg': decOrg.strip(), 'url':url.strip(), 'domain': domain.strip(), 'ip': ip.strip(), 'idd': idd.strip()})
+                """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                       'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
             con.commit()
 
     con.commit()
