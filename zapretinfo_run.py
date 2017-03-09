@@ -31,8 +31,12 @@ def idnaconv(url, reverse=False):
     if tmp_url:
         printt("Converting: %s, type %s" % (tmp_url, type(tmp_url)))
         if reverse:
-            printt("Result: %s" % tmp_url.strip().decode('idna'))
-            return tmp_url.strip().decode('idna', errors='ignore')
+            try:
+                printt("Result: %s" % tmp_url.strip().decode('idna'))
+                return tmp_url.strip().decode('idna')
+            except UnicodeEncodeError:
+                return tmp_url.strip()
+
         else:
             if type(url) == unicode:
                 printt("Result: %s" % tmp_url.strip().encode('idna'))
@@ -42,7 +46,7 @@ def idnaconv(url, reverse=False):
                 return tmp_url.strip().decode('utf-8').encode('idna')
     else:
         printt("Result: %s" % tmp_url)
-        return tmp_url
+        return tmp_url.strip()
 
 
 def str2bool(value):
