@@ -41,6 +41,8 @@ def __genereate():
             edr_urls += cur.fetchall()
         except UnicodeDecodeError as e:
             print("Cannot parse %s with error %s" % (edr_domain, e))
+        except UnicodeEncodeError as e:
+            print("Cannot parse %s with error %s" % (edr_domain, e))
 
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
