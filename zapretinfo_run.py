@@ -10,18 +10,14 @@ import sys
 import time
 import xml.etree.ElementTree as etree
 import zipfile
-#import string
-from time import strftime
-from pid.decorator import pidfile
-# from xml.dom import minidom
-
 import MySQLdb as db
 import suds
-
 import zapretbind
 import zapretdelete_duple
 import zapretnginx
 import zapret_ipfile
+from time import strftime
+from pid.decorator import pidfile
 
 
 def del_front_punctuation(params):
@@ -38,8 +34,12 @@ def idnaconv(url, reverse=False):
             printt("Result: %s" % tmp_url.strip().decode('idna'))
             return tmp_url.strip().decode('idna')
         else:
-            printt("Result: %s" % tmp_url.strip().decode('utf-8').encode('idna'))
-            return tmp_url.strip().decode('utf-8').encode('idna')
+            if type(url) == unicode:
+                printt("Result: %s" % tmp_url.strip().decode('utf-8').encode('idna'))
+                return tmp_url.strip().decode('utf-8').encode('idna')
+            else:
+                printt("Result: %s" % tmp_url.strip().encode('idna'))
+                return tmp_url.strip().encode('idna')
     else:
         printt("Result: %s" % tmp_url)
         return tmp_url
