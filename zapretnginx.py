@@ -12,6 +12,7 @@ def __start():
     global con
     global cur
     con, cur = __edr.DBConnect()
+    con.set_character_set('utf8')
 
 
 def __genereate():
