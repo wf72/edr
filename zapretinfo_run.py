@@ -32,7 +32,7 @@ def idnaconv(url, reverse=False):
         printt("Converting: %s, type %s" % (tmp_url, type(tmp_url)))
         if reverse:
             printt("Result: %s" % tmp_url.strip().decode('idna'))
-            return tmp_url.strip().decode('idna').decode('utf-8')
+            return tmp_url.strip().decode('idna')
         else:
             if type(url) == unicode:
                 printt("Result: %s" % tmp_url.strip().encode('idna'))
