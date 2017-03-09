@@ -12,7 +12,6 @@ def __start():
     global con
     global cur
     con, cur = __edr.DBConnect()
-    con.set_character_set('utf8')
 
 
 def __genereate():
@@ -80,18 +79,18 @@ def __genereate():
                 break
 
         for url_string in sorted(urls_to_write):
-            conf_location += """    location "%s" {
+            conf_location += u"""    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
 
         if not domain_block:
-            conf_location += """    location / {
+            conf_location += u"""    location / {
         proxy_pass http://$host;
             }
 """
         # Закрываем настройки сервера
-        conf_end = """    resolver %(dns_serv)s;
+        conf_end = u"""    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
         __edr.printt(conf_server)
