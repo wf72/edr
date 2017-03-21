@@ -32,17 +32,17 @@ def __genereate():
         edr_urls = cur.fetchall()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
-        try:
-            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                        ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
-            edr_urls += cur.fetchall()
-            cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
-                        ('%://' + __edr.idnaconv(edr_domain, True),))
-            edr_urls += cur.fetchall()
-        except UnicodeDecodeError as e:
-            print("Cannot parse %s with error %s" % (edr_domain, e))
-        except UnicodeEncodeError as e:
-            print("Cannot parse %s with error %s" % (edr_domain, e))
+        # try:
+        #     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #                 ('%://' + __edr.idnaconv(edr_domain, True) + '/%',))
+        #     edr_urls += cur.fetchall()
+        #     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;",
+        #                 ('%://' + __edr.idnaconv(edr_domain, True),))
+        #     edr_urls += cur.fetchall()
+        # except UnicodeDecodeError as e:
+        #     print("Cannot parse %s with error %s" % (edr_domain, e))
+        # except UnicodeEncodeError as e:
+        #     print("Cannot parse %s with error %s" % (edr_domain, e))
 
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
@@ -81,7 +81,7 @@ def __genereate():
                 break
 
         for url_string in sorted(urls_to_write):
-            conf_location += u"""    location "%s" {
+            conf_location += """    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
