@@ -84,7 +84,7 @@ def __genereate():
             conf_location += u"""    location "%s" {
     proxy_pass %s;
             }
-""" % (url_string, __edr.config('URLS')['nginx_stop_url'])
+""" % (url_string.strip(), __edr.config('URLS')['nginx_stop_url'])
 
         if not domain_block:
             conf_location += u"""    location / {
