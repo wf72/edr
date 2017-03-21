@@ -81,7 +81,7 @@ def __genereate():
                 break
 
         for url_string in sorted(urls_to_write):
-            conf_location += """    location "%s" {
+            conf_location += u"""    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string, __edr.config('URLS')['nginx_stop_url'])
