@@ -77,10 +77,9 @@ def __genereate():
         for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
             try:
-                edr_url = unicode(edr_url)
+                urls_to_write.add(unicode(edr_url.path) or "/")
             except UnicodeEncodeError:
-                edr_url = quote(edr_url)
-            urls_to_write.add(edr_url.path or "/")
+                urls_to_write.add(quote(edr_url.path) or "/")
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
                 break
