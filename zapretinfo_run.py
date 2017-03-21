@@ -160,7 +160,7 @@ def DBConnect():
     try:
         printt("Start connecting to DB")
         con = db.connect(**config('DBConfig'))
-        db.set_character_set('utf8mb4')
+        con.set_character_set('utf8mb4')
         cur = con.cursor()
         printt("Connecting done")
         # cur.execute('SET NAMES `utf8`')
