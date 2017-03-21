@@ -95,9 +95,15 @@ def __genereate():
         conf_end = u"""    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
-
-        __edr.printt("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
-        nginx_conf_file.write("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
+        try:
+            __edr.printt(u"%s\n%s\n%s" % (conf_server, conf_location, conf_end))
+        except UnicodeEncodeError as e:
+            __edr.printt(e)
+        try:
+            nginx_conf_file.write("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
+        except UnicodeEncodeError as e:
+            __edr.printt(e)
+            raise
     nginx_conf_file.close()
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
     con.close()
