@@ -114,7 +114,7 @@ def config(section=''):
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
                 'db': Config.get('DBConfig', 'dbName'),
-                # 'charset': 'utf8'
+                'charset': 'utf8mb4'
                 }
     else:
         dict1 = {}
@@ -161,7 +161,10 @@ def DBConnect():
         con = db.connect(**config('DBConfig'))
         cur = con.cursor()
         printt("Connecting done")
-        cur.execute('SET NAMES `utf8`')
+        # cur.execute('SET NAMES `utf8`')
+        cur.execute("SET NAMES utf8mb4;")
+        cur.execute("SET CHARACTER SET utf8mb4;")
+        cur.execute("SET character_set_connection=utf8mb4;")
         return con, cur
     except db.Error as e:
         printt(e)
