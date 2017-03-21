@@ -3,6 +3,7 @@
 # __author__ = 'wf'
 
 from urlparse import urlparse
+from urllib import quote
 from shutil import copyfile
 import zapretinfo_run as __edr
 
@@ -75,6 +76,10 @@ def __genereate():
 
         for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
+            try:
+                edr_url = unicode(edr_url)
+            except UnicodeEncodeError:
+                edr_url = quote(edr_url)
             urls_to_write.add(edr_url.path or "/")
             if (not edr_url.path) or (edr_url.path == '/'):
                 domain_block = 1
