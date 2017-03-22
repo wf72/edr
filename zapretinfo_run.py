@@ -140,7 +140,7 @@ def config(section=''):
 def printt(message):
     """print messages"""
     if str2bool(Verbose):
-        print message
+        print(message)
 
 
 def LogWrite(message,type = ""):

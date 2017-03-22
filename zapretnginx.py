@@ -76,31 +76,31 @@ def __genereate():
 
         for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
-            try:
-                urls_to_write.add(unicode(edr_url.path) or "/")
-            except UnicodeEncodeError:
-                urls_to_write.add(quote(edr_url.path) or "/")
-            if (not edr_url.path) or (edr_url.path == '/'):
+
+            if (not edr_url.path.strip()) or (edr_url.path == '/'):
                 domain_block = 1
                 break
 
+            urls_to_write.add(edr_url.path or "/")
+
+
         for url_string in sorted(urls_to_write):
-            conf_location += u"""    location "%s" {
+            conf_location += """    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string.strip(), __edr.config('URLS')['nginx_stop_url'])
 
         if not domain_block:
-            conf_location += u"""    location / {
+            conf_location += """    location / {
         proxy_pass http://$host;
             }
 """
         # Закрываем настройки сервера
-        conf_end = u"""    resolver %(dns_serv)s;
+        conf_end = """    resolver %(dns_serv)s;
         }
 """ % {'dns_serv':  __edr.config('Main')['dns_serv']}
         try:
-            __edr.printt(u"%s\n%s\n%s" % (conf_server, conf_location, conf_end))
+            __edr.printt("%s\n%s\n%s" % (conf_server, conf_location, conf_end))
         except UnicodeEncodeError as e:
             __edr.printt(e)
         try:
