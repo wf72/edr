@@ -16,7 +16,7 @@ def checksite(url):
         if url[:4] != "http":
             url = "http://%s" % url
         try:
-            answer = urllib2.urlopen(url, timeout=5)
+            answer = urllib2.urlopen(url, timeout=10)
             tmpanswer = answer.read()
             if max(word in tmpanswer for word in find_words):
                 result['blocked'] = url
