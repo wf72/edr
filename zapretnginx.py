@@ -82,9 +82,9 @@ def __genereate():
                 domain_block = 1
                 break
             try:
-                path = edr_url.path.encode('ascii')
+                path = edr_url.path.strip().encode('ascii')
             except UnicodeEncodeError:
-                path = quote(edr_url.path)
+                path = quote(edr_url.path.strip())
             urls_to_write.add(path)
 
 
