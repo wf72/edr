@@ -12,7 +12,7 @@ def checkblockedsites():
     """Возвращает результаты ввиде спиской сайтов. Можно скомпилировать для запуска в консоли
     под windows."""
     print("Start check urls")
-    find_words = ['<title> Доступ Закрыт! - VHG! </title>', '<title>Доступ закрыт</title>']
+    find_words = ['<title> Доступ Закрыт! - VHG! </title>', '<title>Доступ закрыт</title>', '<title>Доступ ограничен</title>']
     print("Tryiing to find: %s" % ";".join(find_words))
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
