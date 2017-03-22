@@ -78,10 +78,14 @@ def __genereate():
             edr_url = urlparse(edr_url_temp[0].strip())
 
             if (not edr_url.path.strip()) or (edr_url.path == '/'):
+                urls_to_write.add('/')
                 domain_block = 1
                 break
-
-            urls_to_write.add(edr_url.path or "/")
+            try:
+                path = edr_url.path.encode('ascii')
+            except UnicodeEncodeError:
+                path = quote(edr_url.path)
+            urls_to_write.add(path)
 
 
         for url_string in sorted(urls_to_write):
