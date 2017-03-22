@@ -29,7 +29,7 @@ def __genereate():
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     for edr_domain in domains:
         # Формируем секцию server
-        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + u'/%',))
+        cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
         edr_urls = cur.fetchall()
         cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
         edr_urls += cur.fetchall()
@@ -44,7 +44,6 @@ def __genereate():
         #     print("Cannot parse %s with error %s" % (edr_domain, e))
         # except UnicodeEncodeError as e:
         #     print("Cannot parse %s with error %s" % (edr_domain, e))
-
         edr_ports = sorted(set([urlparse(i[0].strip()).scheme for i in edr_urls if i[0]]))
         conf_ports = ''
         for edr_port in edr_ports:
@@ -62,10 +61,10 @@ def __genereate():
 """ % {'domain': __edr.idnaconv(edr_domain)}
         conf_server += conf_ports
         # Формирует location
-        conf_location = u""
+        conf_location = ""
         domain_block = 0
         query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-                ('%://' + edr_domain + u'/%')
+                ('%://' + edr_domain + '/%')
         cur.execute(query)
         edr_urls = cur.fetchall()
         query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
@@ -73,10 +72,8 @@ def __genereate():
         cur.execute(query)
         edr_urls += cur.fetchall()
         urls_to_write = set()
-
         for edr_url_temp in sorted(edr_urls):
             edr_url = urlparse(edr_url_temp[0].strip())
-
             if (not edr_url.path.strip()) or (edr_url.path == '/'):
                 urls_to_write.add('/')
                 domain_block = 1
@@ -86,14 +83,11 @@ def __genereate():
             except UnicodeEncodeError:
                 path = quote(edr_url.path.strip())
             urls_to_write.add(path)
-
-
         for url_string in sorted(urls_to_write):
             conf_location += """    location "%s" {
     proxy_pass %s;
             }
 """ % (url_string.strip(), __edr.config('URLS')['nginx_stop_url'])
-
         if not domain_block:
             conf_location += """    location / {
         proxy_pass http://$host;
