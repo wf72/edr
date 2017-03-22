@@ -79,8 +79,8 @@ def __genereate():
                 domain_block = 1
                 break
             try:
-                path = edr_url.path.strip().encode('ascii')
-            except UnicodeEncodeError:
+                path = edr_url.path.strip()
+            except UnicodeError:
                 path = quote(edr_url.path.strip())
             urls_to_write.add(path)
         for url_string in sorted(urls_to_write):
