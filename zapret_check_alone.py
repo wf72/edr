@@ -41,7 +41,7 @@ def checkblockedsites():
     pool = ThreadPool(4)
     urls = []
     count = 0
-    max_count = 100
+    max_count = 10
     for row in reader:
         if row[0] == datetime.now().strftime("%Y-%m-%d"):
             continue
