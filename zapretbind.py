@@ -24,7 +24,6 @@ def __write_to_file(data):
 def __domainparse(domain):
     skip_domain = ['youtube.com', 'www.youtube.com']
     __edr.printt(domain)
-
     if not domain.lower() in skip_domain:
         if domain[-1:].isalpha():
             write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
