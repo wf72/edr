@@ -160,11 +160,9 @@ def LogWrite(message,type = ""):
 def DBConnect():
     global cur, con
     try:
-        printt("Start connecting to DB")
         con = db.connect(**config('DBConfig'))
         con.set_character_set('utf8mb4')
         cur = con.cursor()
-        printt("Connecting done")
         # cur.execute('SET NAMES `utf8`')
         cur.execute("SET NAMES utf8mb4;")
         cur.execute("SET CHARACTER SET utf8mb4;")
@@ -172,6 +170,7 @@ def DBConnect():
         return con, cur
     except db.Error as e:
         printt(e)
+        raise
 
 
 def CreateDB():
