@@ -22,11 +22,11 @@ def zabbix_check_status_write(status):
         if status:
             zb_file.write("1\n")
             __edr.printt("Writing to zb_check_file 1")
-            __edr.LogWrite("Writing to zb_check_file 1")
+            __edr.LogWrite("Writing to zb_check_file 1", "zb_check")
         else:
             zb_file.write("0\n")
             __edr.printt("Writing to zb_check_file 0")
-            __edr.LogWrite("Writing to zb_check_file 0")
+            __edr.LogWrite("Writing to zb_check_file 0", "zb_check")
         zb_file.close()
 
 
@@ -48,7 +48,7 @@ def checksite(url):
             result['errors'] = url
     __edr.LogWrite("""===Blocked result: %(blocked)s
 !!!Not blocked: %(notblocked)s
-...With errors: %(errors)s\n""" % result)
+...With errors: %(errors)s\n""" % result, type="zb_check")
     return result
 
 
@@ -81,9 +81,9 @@ def checkblockedsites():
     __edr.printt("===\nBlocked result: %s\n" % result['blocked'])
     __edr.printt("===\nNot blocked result: %s\n" % result['notblocked'])
     __edr.printt("===\nWith errors: %s\n" % result['errors'])
-    __edr.LogWrite("===\nBlocked result: %s\n" % result['blocked'])
-    __edr.LogWrite("===\nNot blocked result: %s\n" % result['notblocked'])
-    __edr.LogWrite("===\nWith errors: %s\n" % result['errors'])
+    __edr.LogWrite("===\nBlocked result: %s\n" % result['blocked'], "zb_check")
+    __edr.LogWrite("===\nNot blocked result: %s\n" % result['notblocked'], "zb_check")
+    __edr.LogWrite("===\nWith errors: %s\n" % result['errors'], "zb_check")
     pool.close()
     pool.join()
     zabbix_check_status_write(int(bool(result)))
