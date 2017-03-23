@@ -23,14 +23,15 @@ def __write_to_file(data):
 
 def __domainparse(domain):
     skip_domain = ['youtube.com', 'www.youtube.com']
-    __edr.printt(domain)
+    #__edr.printt(domain.strip())
     if not domain.lower() in skip_domain:
+        if domain[-1] == ".":
+            domain = domain[:-1]
         if domain[-1:].isalpha():
-            write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
+            write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };' % (
                 domain, __edr.config('Dirs')['bind_block_file'])
-        else:
-            return
-        return write_data
+            return write_data
+    return ""
 
 
 def __genereate():
@@ -41,12 +42,11 @@ def __genereate():
     __edr.LogWrite("Genereate bind file")
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data if domain])
+    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
-    result = ""
-    result += pool.map(__domainparse, data2)
-    __write_to_file(result)
+    result = pool.map(__domainparse, data2)
+    __write_to_file("\n".join(result))
     bind_file_path = __edr.config('Dirs')['bind_file']
     copyfile(bind_file_path+".tmp", bind_file_path)
 

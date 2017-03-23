@@ -98,7 +98,7 @@ def __domainparse(edr_domain):
     except UnicodeEncodeError as e:
         __edr.printt(e)
     try:
-        return "%s\n%s\n%s\n" % (conf_server, conf_location, conf_end)
+        return "%s\n%s\n%s" % (conf_server, conf_location, conf_end)
     except UnicodeEncodeError as e:
         __edr.printt(e)
         raise
@@ -118,7 +118,7 @@ def __genereate():
     result = ""
     result += pool.map(__domainparse, domains)
     con.close()
-    write_to_file(result)
+    write_to_file("\n".join(result))
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
 
