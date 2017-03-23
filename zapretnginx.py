@@ -22,6 +22,7 @@ def write_to_file(data):
     nginx_conf_file.write("%s\n" % data)
     nginx_conf_file.close()
 
+
 def __domainparse(edr_domain):
     # Формируем секцию server
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
@@ -114,11 +115,12 @@ def __genereate():
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
+    con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     pool.map(__domainparse, domains)
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
-    con.close()
+
 
 
 def main():

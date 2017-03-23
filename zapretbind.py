@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'wf'
+# __author__ = 'wf'
 
-import zapretinfo_run as __edr
 from shutil import copyfile
+from multiprocessing.dummy import Pool as ThreadPool
+import zapretinfo_run as __edr
 
 
 def __start():
@@ -11,6 +12,7 @@ def __start():
     global con
     global cur
     con, cur = __edr.DBConnect()
+
 
 def __write_to_file(data):
     conf_file_path = __edr.config('Dirs')['bind_file']
@@ -28,8 +30,9 @@ def __domainparse(domain):
             write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
                 domain, __edr.config('Dirs')['bind_block_file']))
         else:
-            continue
+            return
         __write_to_file(write_data)
+
 
 def __genereate():
     """
@@ -37,16 +40,14 @@ def __genereate():
     :return:
     """
     __edr.LogWrite("Genereate bind file")
-
-    bind_file_path = __edr.config('Dirs')['bind_file']
-    bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
-
-    bind_file.close()
     con.close()
-    copyfile(bind_file_path+".tmp",bind_file_path)
+    pool = ThreadPool(int(__edr.config('Main')['threads']))
+    pool.map(__domainparse, data2)
+    bind_file_path = __edr.config('Dirs')['bind_file']
+    copyfile(bind_file_path+".tmp", bind_file_path)
 
 
 def main():
