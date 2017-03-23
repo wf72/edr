@@ -15,6 +15,10 @@ def __start():
     con, cur = __edr.DBConnect()
 
 
+def __domainparse(domain):
+
+
+
 def __genereate():
     """
     Создаём файл настроек для nginx
