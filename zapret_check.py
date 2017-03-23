@@ -46,6 +46,9 @@ def checksite(url):
             result['errors'] = url
         except socket.timeout:
             result['errors'] = url
+    __edr.LogWrite("""===Blocked result: %(blocked)s
+!!!Not blocked: %(notblocked)s
+...With errors: %(errors)s\n""" % result)
     return result
 
 
