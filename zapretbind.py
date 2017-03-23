@@ -26,11 +26,11 @@ def __domainparse(domain):
     __edr.printt(domain)
     if not domain.lower() in skip_domain:
         if domain[-1:].isalpha():
-            write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
-                domain, __edr.config('Dirs')['bind_block_file']))
+            write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
+                domain, __edr.config('Dirs')['bind_block_file'])
         else:
             return
-        __write_to_file(write_data)
+        return write_data
 
 
 def __genereate():
@@ -44,7 +44,9 @@ def __genereate():
     data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
-    pool.map(__domainparse, data2)
+    result = ""
+    result += pool.map(__domainparse, data2)
+    __write_to_file(result)
     bind_file_path = __edr.config('Dirs')['bind_file']
     copyfile(bind_file_path+".tmp", bind_file_path)
 
