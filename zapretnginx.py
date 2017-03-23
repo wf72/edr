@@ -114,8 +114,7 @@ def __genereate():
     data = cur.fetchall()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     pool = ThreadPool(int(__edr.config('Main')['threads']))
-    result = ""
-    result += pool.map(__domainparse, domains)
+    result = pool.map(__domainparse, domains)
     con.close()
     write_to_file("\n".join(result))
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
