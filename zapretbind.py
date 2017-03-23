@@ -25,8 +25,6 @@ def __domainparse(domain):
     skip_domain = ['youtube.com', 'www.youtube.com']
     #__edr.printt(domain.strip())
     if not domain.lower() in skip_domain:
-        if domain[-1] == ".":
-            domain = domain[:-1]
         if domain[-1:].isalpha():
             write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };' % (
                 domain, __edr.config('Dirs')['bind_block_file'])
@@ -42,7 +40,7 @@ def __genereate():
     __edr.LogWrite("Genereate bind file")
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
+    data2 = sorted(set([__edr.idnaconv(domain[0].strip()) for domain in data]))
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     result = pool.map(__domainparse, data2)

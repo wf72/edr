@@ -21,8 +21,10 @@ from pid.decorator import pidfile
 
 
 def del_front_punctuation(params):
-    if params[0] in ".":
+    if params[0] == ".":
         params = "*%s" % params
+    if params[-1] == ".":
+        params = params[:-1]
     return params
 
 
