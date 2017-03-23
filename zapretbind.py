@@ -12,6 +12,24 @@ def __start():
     global cur
     con, cur = __edr.DBConnect()
 
+def __write_to_file(data):
+    conf_file_path = __edr.config('Dirs')['bind_file']
+    conf_file = open(conf_file_path+".tmp", 'w')
+    conf_file.write("%s\n" % data)
+    conf_file.close()
+
+
+def __domainparse(domain):
+    skip_domain = ['youtube.com', 'www.youtube.com']
+    __edr.printt(domain)
+
+    if not domain.lower() in skip_domain:
+        if domain[-1:].isalpha():
+            write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
+                domain, __edr.config('Dirs')['bind_block_file']))
+        else:
+            continue
+        __write_to_file(write_data)
 
 def __genereate():
     """
@@ -19,22 +37,13 @@ def __genereate():
     :return:
     """
     __edr.LogWrite("Genereate bind file")
-    skip_domain = ['youtube.com', 'www.youtube.com']
+
     bind_file_path = __edr.config('Dirs')['bind_file']
     bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain[0]) for domain in data])
-    for rec in data2:
-        __edr.printt(rec)
-        edr_url = rec.strip()
-        if not edr_url.lower() in skip_domain:
-            if edr_url[-1:].isalpha():
-                write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
-                    edr_url, __edr.config('Dirs')['bind_block_file']))
-            else:
-                continue
-            bind_file.write(write_data)
+    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
+
     bind_file.close()
     con.close()
     copyfile(bind_file_path+".tmp",bind_file_path)

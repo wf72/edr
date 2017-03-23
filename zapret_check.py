@@ -72,7 +72,7 @@ def checkblockedsites():
                 url = "http://%s" % url
             urls.append(url)
             count += 1
-    pool = ThreadPool(__edr.config('Main')['threads'])
+    pool = ThreadPool(int(__edr.config('Main')['threads']))
     results = pool.map(checksite, urls)
     for i in results:
         for key in result.keys():
