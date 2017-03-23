@@ -49,6 +49,7 @@ def __genereate():
     __write_to_file("\n".join(result))
     bind_file_path = __edr.config('Dirs')['bind_file']
     copyfile(bind_file_path+".tmp", bind_file_path)
+    __edr.LogWrite("Genereate bind file done")
 
 
 def main():

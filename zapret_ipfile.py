@@ -29,6 +29,7 @@ def __gen_ipfile():
                 ipfile.write("%s\n" % i)
         ipfile.close()
         copyfile(__edr.config('Dirs')['path_ip_file'] + ".tmp", __edr.config('Dirs')['path_ip_file'])
+        __edr.LogWrite("Write ip's to file done")
 
 
 def main():
