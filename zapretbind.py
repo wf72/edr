@@ -41,7 +41,7 @@ def __genereate():
     __edr.LogWrite("Genereate bind file")
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data])
+    data2 = set([__edr.idnaconv(domain[0].strip()) for domain in data if domain])
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     result = ""
