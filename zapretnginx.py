@@ -11,9 +11,6 @@ from multiprocessing.dummy import Pool as ThreadPool
 
 def __start():
     __edr.config()
-    global con
-    global cur
-    con, cur = __edr.DBConnect()
 
 
 def write_to_file(data):
@@ -25,6 +22,7 @@ def write_to_file(data):
 
 def __domainparse(edr_domain):
     # Формируем секцию server
+    con, cur = __edr.DBConnect()
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
     edr_urls = cur.fetchall()
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain,))
@@ -98,6 +96,7 @@ def __domainparse(edr_domain):
     except UnicodeEncodeError as e:
         __edr.printt(e)
     try:
+        con.close()
         return "%s\n%s\n%s" % (conf_server, conf_location, conf_end)
     except UnicodeEncodeError as e:
         __edr.printt(e)
@@ -109,13 +108,14 @@ def __genereate():
     Создаём файл настроек для nginx
     :return:
     """
+    con, cur = __edr.DBConnect()
     __edr.LogWrite("Genereate nginx file")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
+    con.close()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     result = pool.map(__domainparse, domains)
-    con.close()
     write_to_file("\n".join(result))
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
