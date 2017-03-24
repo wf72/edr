@@ -57,14 +57,14 @@ def __domainparse(edr_domain):
     # Формирует location
     conf_location = ""
     domain_block = 0
-    query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-            ('%://' + edr_domain + '/%')
-    cur.execute(query)
-    edr_urls = cur.fetchall()
-    query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
-            ('%://' + edr_domain)
-    cur.execute(query)
-    edr_urls += cur.fetchall()
+    # query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+    #         ('%://' + edr_domain + '/%')
+    # cur.execute(query)
+    # edr_urls = cur.fetchall()
+    # query = """SELECT url FROM edrdata WHERE disabled=0 and url like \'%s\';""" % \
+    #         ('%://' + edr_domain)
+    # cur.execute(query)
+    # edr_urls += cur.fetchall()
     urls_to_write = set()
     for edr_url_temp in sorted(edr_urls):
         edr_url = urlparse(edr_url_temp[0].strip())
@@ -116,9 +116,9 @@ def __genereate():
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     cur.close()
     con.close()
-    # pool = ThreadPool(int(__edr.config('Main')['threads']))
-    # result = pool.map(__domainparse, domains)
-    result = map(__domainparse, domains)
+    pool = ThreadPool(int(__edr.config('Main')['threads']))
+    result = pool.map(__domainparse, domains)
+    #result = map(__domainparse, domains)
     write_to_file("\n".join(result))
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
