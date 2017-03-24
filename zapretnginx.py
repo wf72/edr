@@ -6,7 +6,7 @@ from urlparse import urlparse
 from urllib import quote
 from shutil import copyfile
 import zapretinfo_run as __edr
-from multiprocessing.dummy import Pool as ThreadPool
+# from multiprocessing.dummy import Pool as ThreadPool
 
 
 def __start():
@@ -116,13 +116,13 @@ def __genereate():
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     cur.close()
     con.close()
-    pool = ThreadPool(int(__edr.config('Main')['threads']))
-    result = pool.map(__domainparse, domains)
+    # pool = ThreadPool(int(__edr.config('Main')['threads']))
+    # result = pool.map(__domainparse, domains)
+    result = map(__domainparse, domains)
     write_to_file("\n".join(result))
     nginx_conf_file_path = __edr.config('Dirs')['nginx_conf_file']
     copyfile(nginx_conf_file_path+".tmp", nginx_conf_file_path)
     __edr.LogWrite("Genereate nginx file done")
-
 
 
 def main():
