@@ -96,6 +96,7 @@ def __domainparse(edr_domain):
     except UnicodeEncodeError as e:
         __edr.printt(e)
     try:
+        cur.close()
         con.close()
         return "%s\n%s\n%s" % (conf_server, conf_location, conf_end)
     except UnicodeEncodeError as e:
@@ -112,8 +113,9 @@ def __genereate():
     __edr.LogWrite("Genereate nginx file")
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    con.close()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
+    cur.close()
+    con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     result = pool.map(__domainparse, domains)
     write_to_file("\n".join(result))

@@ -41,6 +41,7 @@ def __genereate():
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
     data2 = sorted(set([__edr.idnaconv(domain[0].strip()) for domain in data]))
+    cur.close()
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
     result = pool.map(__domainparse, data2)

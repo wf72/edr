@@ -116,8 +116,6 @@ def config(section=''):
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
                 'db': Config.get('DBConfig', 'dbName'),
-                #'charset': 'utf8mb4',
-                #'use_unicode': 'True',
                 }
     else:
         dict1 = {}
