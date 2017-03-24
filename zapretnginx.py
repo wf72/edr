@@ -6,7 +6,7 @@ from urlparse import urlparse
 from urllib import quote
 from shutil import copyfile
 import zapretinfo_run as __edr
-# from multiprocessing.dummy import Pool as ThreadPool
+from multiprocessing.dummy import Pool as ThreadPool
 
 
 def __start():
