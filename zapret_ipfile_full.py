@@ -24,6 +24,18 @@ def __gen_ipfile():
             __edr.printt(ip[0])
             for i in literal_eval(ip[0]):
                 ipfile.write("%s\n" % i)
+        if __edr.str2bool(__edr.config('Main')['export_dns2ip_file']):
+            __edr.printt("Write domain names to file")
+            __edr.LogWrite("Write domain names to file")
+            cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
+            data = cur.fetchall()
+            domains = sorted(set([__edr.idnaconv(domain[0]) for domain in data]))
+            __edr.printt(data)
+            for domain in domains:
+                __edr.printt(domain)
+                for i in literal_eval(domain):
+                    ipfile.write("%s\n" % i)
+
         ipfile.close()
         copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
 
