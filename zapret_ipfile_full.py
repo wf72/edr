@@ -20,7 +20,7 @@ def __check_domain(domain):
             return True
         else:
             return False
-    except dns.resolver.NoNameservers:
+    except dns.exception.DNSException:
         return False
 
 def __clean_domain_name(domain):
