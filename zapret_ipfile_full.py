@@ -9,15 +9,16 @@ import zapretinfo_run as __edr
 import dns.resolver
 
 
-
 def __start():
     __edr.config()
+
 
 def __check_domain(domain):
     nameservers = dns.resolver.query(domain, 'NS')
     if len(nameservers) > 0:
         return True
-    else False
+    else:
+        return False
 
 
 def __clean_domain_name(domain):
@@ -27,10 +28,11 @@ def __clean_domain_name(domain):
         domain = domain[:-1]
     return domain
 
+
 def __gen_ipfile():
+    ipfile = open(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", 'w')
     if __edr.str2bool(__edr.config('Main')['export_ip_file']):
         con, cur = __edr.DBConnect()
-        ipfile = open(__edr.config('Dirs')['path_ip_file']+"_full.tmp", 'w')
         __edr.printt("Write ip's to file")
         __edr.LogWrite("Write ip's to file")
         cur.execute("SELECT ip FROM edrdata WHERE disabled=0 GROUP BY ip;")
@@ -48,9 +50,9 @@ def __gen_ipfile():
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
         domains = sorted((domain for domain in domains if __check_domain(domain)))
         for domain in domains:
-            ipfile.write("%s\n" % i)
-        ipfile.close()
-        copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
+            ipfile.write("%s\n" % domain)
+    ipfile.close()
+    copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
 
 
 def main():
