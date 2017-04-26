@@ -37,9 +37,7 @@ def __gen_ipfile():
         __edr.LogWrite("Write ip's to file")
         cur.execute("SELECT ip FROM edrdata WHERE disabled=0 GROUP BY ip;")
         data = cur.fetchall()
-        __edr.printt(data)
         for ip in data:
-            __edr.printt(ip[0])
             for i in literal_eval(ip[0]):
                 ipfile.write("%s\n" % i)
     if __edr.str2bool(__edr.config('Main')['export_dns2ip_file']):
