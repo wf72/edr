@@ -15,7 +15,9 @@ def __start():
 
 def __check_domain(domain):
     nameservers = dns.resolver.query(domain, 'NS')
-
+    if len(nameservers) > 0:
+        return True
+    else False
 
 
 def __clean_domain_name(domain):
@@ -44,10 +46,9 @@ def __gen_ipfile():
         cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
         data = cur.fetchall()
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
-        domains = sorted((__check_domain(domain) for domain in domains))
+        domains = sorted((domain for domain in domains if __check_domain(domain)))
         for domain in domains:
-            for i in literal_eval(domain):
-                ipfile.write("%s\n" % i)
+            ipfile.write("%s\n" % i)
         ipfile.close()
         copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
 
