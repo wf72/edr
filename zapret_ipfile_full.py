@@ -14,12 +14,14 @@ def __start():
 
 
 def __check_domain(domain):
-    nameservers = dns.resolver.query(domain, 'NS')
-    if len(nameservers) > 0:
-        return True
-    else:
+    try:
+        nameservers = dns.resolver.query(domain, 'NS')
+        if len(nameservers) > 0:
+            return True
+        else:
+            return False
+    except dns.resolver.NoNameservers:
         return False
-
 
 def __clean_domain_name(domain):
     while domain[0] in punctuation:
