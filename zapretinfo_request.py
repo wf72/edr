@@ -16,7 +16,7 @@ def diff_request():
     cur.execute("SELECT max(time) FROM requests;")
     data = cur.fetchall()
     if data[0][0]:
-        request_date = data[0][0]
+        request_date = data[0][0].replace(" ", "T")
     else:
         request_date = "2012-01-01T01:01:01.000+06:00"
     cur.close()
