@@ -103,14 +103,15 @@ def __domainparse(edr_domain):
         raise
 
 
-def __genereate():
+def __genereate(**kwargs):
     """
     Создаём файл настроек для nginx
     :return:
     """
     con, cur = __edr.DBConnect()
     __edr.LogWrite("Genereate nginx file")
-    cur.execute("SELECT url FROM edrdata WHERE disabled=0 GROUP BY domain;")
+    code = kwargs.get('code', '')
+    cur.execute("SELECT url FROM edrdata WHERE disabled=0 and code=%s GROUP BY domain;", code)
     data = cur.fetchall()
     domains = sorted(set([__edr.idnaconv(urlparse(url[0]).netloc) for url in data]))
     con.close()
@@ -123,10 +124,10 @@ def __genereate():
     __edr.LogWrite("Genereate nginx file done")
 
 
-def main():
+def main(**kwargs):
     if __edr.str2bool(__edr.config('Main')['nginx']):
         __start()
-        __genereate()
+        __genereate(**kwargs)
 
 
 if __name__ == "__main__":

@@ -22,6 +22,8 @@ def __gen_ipfile():
         else:
             cur.execute("SELECT ip FROM edrdata WHERE disabled=0 GROUP BY ip;")
         data = cur.fetchall()
+        cur.close()
+        con.close()
         __edr.printt(data)
         for ip in data:
             __edr.printt(literal_eval(ip[0]))
@@ -33,9 +35,8 @@ def __gen_ipfile():
 
 
 def main():
-    if __edr.str2bool(__edr.config('Main')['nginx']):
-        __start()
-        __gen_ipfile()
+    __start()
+    __gen_ipfile()
 
 
 if __name__ == "__main__":
