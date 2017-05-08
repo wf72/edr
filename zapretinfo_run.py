@@ -230,8 +230,7 @@ def CreateDB():
         sqltext = """CREATE TABLE IF NOT EXISTS requests (
                 `time` DATETIME,
                 `code` VARCHAR(255),
-                `data` TEXT,
-                `diff` TINYINT
+                `data` TEXT
                 ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
@@ -247,8 +246,7 @@ def CreateDB():
 def UpdateTable(**kwargs):
     printt("Обновляем базу")
     LogWrite("Обновляем базу")
-    if not kwargs.get('diff', False):
-        cur.execute("UPDATE edrdata SET disabled=1")
+    cur.execute("UPDATE edrdata SET disabled=1")
     con.commit()
     printt("XML parse")
     LogWrite("XML parse")
@@ -461,13 +459,12 @@ def start(**kwargs):
 def main(argv):
     config()
     try:
-        opts, args = getopt.getopt(argv, "hcudv", ["createdb", "update", "verbose", "diff"])
+        opts, args = getopt.getopt(argv, "hcudv", ["createdb", "update", "verbose"])
     except getopt.GetoptError:
         print '-h for help'
         sys.exit(2)
     startupdate = False
     createdb = False
-    diff = False
     for opt, arg in opts:
         if opt == '-h':
             print """--createdb or -c to create database
@@ -482,17 +479,13 @@ def main(argv):
         elif opt in ("-u", "--update"):
             printt("Запускаем обмен")
             startupdate = True
-        elif opt in ("-d", "--diff"):
-            printt("Запускаем не полный обмен")
-            startupdate = True
-            diff = True
         elif opt in ("-c", "--createdb"):
             createdb = True
     if createdb:
         CreateDB()
     elif startupdate:
-        zapretinfo_request.gen_request(**{'diff': diff})
-        start(**{'diff': diff})
+        zapretinfo_request.gen_request()
+        start()
 
 
 if __name__ == "__main__":

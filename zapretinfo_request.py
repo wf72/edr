@@ -13,15 +13,9 @@ def __start():
 def gen_request(**kwargs):
     __start()
     con, cur = __edr.DBConnect()
-    if kwargs.get('diff', False):
-        cur.execute("SELECT max(time) FROM requests;")
-        data = cur.fetchall()
-        if data[0][0]:
-            request_date = str(data[0][0]).replace(" ", "T")+"+06:00"
-        else:
-            request_date = "2012-01-01T01:01:01.000+06:00"
-    else:
-        request_date = "2012-01-01T01:01:01.000+06:00"
+    request_date = datetime.strftime(datetime.now(), "%Y-%m-%dT%H:%M:%S%z")
+    # else:
+    #     request_date = "2012-01-01T01:01:01.000+06:00"
     cur.close()
     con.close()
     request_text = """<?xml version="1.0" encoding="windows-1251"?>
@@ -49,11 +43,11 @@ def request2db(data, **kwargs):
     __start()
     con, cur = __edr.DBConnect()
     __edr.printt("INSERT requests SET time=%(time)s, data=%(data)s, diff=%(diff)s, code=%(code)s;" %
-                {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"), 'data': data,
-                 'diff': 1 if kwargs.get('diff', False) else 0, 'code': kwargs.get('code', "")})
+                {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"),
+                 'data': data, 'code': kwargs.get('code', "")})
     cur.execute("INSERT requests SET time=%(time)s, data=%(data)s, diff=%(diff)s, code=%(code)s;",
-                {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"), 'data': data,
-                 'diff': 1 if kwargs.get('diff', False) else 0, 'code': kwargs.get('code', "")})
+                {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"),
+                 'data': data, 'code': kwargs.get('code', "")})
     con.commit()
     cur.close()
     con.close()
