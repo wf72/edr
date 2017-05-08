@@ -11,6 +11,7 @@ def __start():
 
 
 def diff_request():
+    __start()
     con, cur = __edr.DBConnect()
     cur.execute("SELECT max(time) FROM requests;")
     data = cur.fetchall()
@@ -33,14 +34,16 @@ def diff_request():
     request_path = __edr.config('Dirs')['xml_file_name']
     request_sig_path = __edr.config('Dirs')['sig_file_name']
     pem_file = __edr.config('Dirs')['pem_file_name']
+    openssl = __edr.config('Dirs')['openssl_path']
     request_file = open(request_path, 'w')
     request_file.write(request_text)
     request_file.close()
-    os.system("openssl smime -sign -in %(zapros)s -out %(zapros_sig)s -binary -signer %(pem)s -outform DER -nodetach" %
-              {"zapros": request_file, "zapros_sig": request_sig_path, "pem": pem_file})
+    os.system("%(openssl)s smime -sign -in %(zapros)s -out %(zapros_sig)s -binary -signer %(pem)s -outform DER -nodetach" %
+              {"zapros": request_path, "zapros_sig": request_sig_path, "pem": pem_file, 'openssl': openssl})
 
 
 def full_request():
+    __start()
     request_text = """<?xml version="1.0" encoding="windows-1251"?>
     <request>
             <requestTime>2012-01-01T01:01:01.000+06:00</requestTime>
@@ -53,14 +56,16 @@ def full_request():
     request_path = __edr.config('Dirs')['xml_file_name']
     request_sig_path = __edr.config('Dirs')['sig_file_name']
     pem_file = __edr.config('Dirs')['pem_file_name']
+    openssl = __edr.config('Dirs')['openssl_path']
     request_file = open(request_path, 'w')
     request_file.write(request_text)
     request_file.close()
     os.system("openssl smime -sign -in %(zapros)s -out %(zapros_sig)s -binary -signer %(pem)s -outform DER -nodetach" %
-              {"zapros": request_file, "zapros_sig": request_sig_path, "pem": pem_file})
+              {"zapros": request_path, "zapros_sig": request_sig_path, "pem": pem_file, 'openssl': openssl})
 
 
 def request2db(data, **kwargs):
+    __start()
     con, cur = __edr.DBConnect()
     cur.execute("INSERT requests SET time=%(time)s data=%(data)s diff=%(diff)s code=%(code)s;",
                 {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"), 'data': data,
@@ -70,7 +75,7 @@ def request2db(data, **kwargs):
 
 
 def main():
-    __edr.config()
+    __start()
 
 
 if __name__ == "__main__":
