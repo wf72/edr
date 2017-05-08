@@ -436,8 +436,8 @@ def start(**kwargs):
                     start()
                 else:
                     zf.close()
-                file = open(work_dir + 'dump.xml', "r")
-                data = file.read()
+                # file = open(work_dir + 'dump.xml', "r")
+                data = "" #  file.read()
                 zapretinfo_request.request2db(data, **kwargs)
                 #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable(**kwargs)
