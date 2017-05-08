@@ -15,7 +15,7 @@ def diff_request():
     con, cur = __edr.DBConnect()
     cur.execute("SELECT max(time) FROM requests;")
     data = cur.fetchall()
-    if data:
+    if data[0]:
         request_date = data[0]
     else:
         request_date = "2012-01-01T01:01:01.000+06:00"
