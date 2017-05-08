@@ -39,7 +39,6 @@ def idnaconv(url, reverse=False):
                 return tmp_url.strip().decode('idna')
             except UnicodeEncodeError:
                 return tmp_url.strip()
-
         else:
             if type(url) == unicode:
                 #printt("Result: %s" % tmp_url.strip().encode('idna'))
@@ -76,19 +75,15 @@ def config(section=''):
                      'db': '',
                      'dns_serv': '80.78.96.1',
                      'Verbose': False}
-
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
     Config.read(work_dir+"/settings.cfg")
-
     global Verbose
     Verbose = Config.get('Main', 'Verbose')
     if not section:
         global API_URL, XML_FILE_NAME, SIG_FILE_NAME, path_IP_file, filelog, zabbix_status_file, STOP_URL, \
             dumpFormatVersion
-
         API_URL = Config.get('URLS', 'API_URL')
         STOP_URL = Config.get('URLS', 'STOP_URL')
-
         if Config.get('Dirs', 'XML_FILE_NAME')[0] == "/":
             XML_FILE_NAME = Config.get('Dirs', 'XML_FILE_NAME')
         else:
@@ -111,7 +106,6 @@ def config(section=''):
         else:
             zabbix_status_file = work_dir + Config.get('Dirs', 'zabbix_status_file')
         return
-
     elif section == 'DBConfig':
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
@@ -134,7 +128,6 @@ def config(section=''):
             except SystemError as e:
                 printt("exception on %s!" % option)
                 dict1[option] = None
-
         return dict1
 
 
@@ -176,9 +169,7 @@ def CreateDB():
     dbRootUser = raw_input("Enter mysql superuser name [%s]: " % 'root')
     if not dbRootUser:
         dbRootUser = 'root'
-
     dbRootPass = getpass.getpass("Enter mysql superuser password: ")
-
     try:
         printt("Create DB on host: %s User: %s, Pass: %s" % (config('DBConfig')['host'], dbRootUser, dbRootPass))
         concreate = db.connect(host=config('DBConfig')['host'], user=dbRootUser, passwd=dbRootPass, db='mysql')
@@ -302,7 +293,6 @@ def UpdateTable(**kwargs):
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
             """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
                    'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
-
                 printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
             includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
@@ -310,7 +300,6 @@ def UpdateTable(**kwargs):
             """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
                    'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
             con.commit()
-
     con.commit()
     zabbix_status_write(1)
     printt("DB update done")
@@ -323,12 +312,10 @@ def DeleteTrash():
         os.remove(work_dir + 'result.zip') if os.path.exists(work_dir + 'result.zip') else None
     except OSError:
         pass
-
     try:
         os.remove(work_dir + 'dump.xml') if os.path.exists(work_dir + 'dump.xml') else None
     except OSError:
         pass
-
     try:
         os.remove(work_dir + 'dump.xml.sig') if os.path.exists(work_dir + 'dump.xml.sig') else None
     except OSError:
@@ -374,12 +361,9 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
     printt("Отправляем запрос с данными:")
     LogWrite("Отправляем запрос с данными:")
     # printt(data)
-
     sign = base64.b64encode(data)
-
     client = suds.client.Client(API_URL)
     result = client.service.sendRequest(xml, sign, dumpformatversion)
-
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
@@ -504,7 +488,6 @@ def main(argv):
             diff = True
         elif opt in ("-c", "--createdb"):
             createdb = True
-
     if createdb:
         CreateDB()
     elif startupdate:
