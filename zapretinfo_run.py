@@ -205,6 +205,14 @@ def CreateDB():
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
+    except db.Error as e:
+        try:
+            print
+            "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+        except IndexError:
+            print
+            "MySQL Error: %s" % str(e)
+    try:
         sqltext = """CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
@@ -218,8 +226,16 @@ def CreateDB():
         curcreate.execute(sqltext)
         concreate.commit()
         curcreate.execute("INSERT INTO version SET `version`=%s", (0.4,))
-        #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
+        # curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
         concreate.commit()
+    except db.Error as e:
+        try:
+            print
+            "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+        except IndexError:
+            print
+            "MySQL Error: %s" % str(e)
+    try:
         sqltext = """CREATE TABLE IF NOT EXISTS requests (
                 `time` DATETIME,
                 `code` VARCHAR(255),
@@ -230,7 +246,7 @@ def CreateDB():
         curcreate.execute(sqltext)
         concreate.commit()
         curcreate.close()
-    except db.Error, e:
+    except db.Error as e:
         try:
             print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
         except IndexError:
