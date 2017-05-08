@@ -30,9 +30,9 @@ def diff_request():
 </request>
 """ % request_date
     # datetime.strftime(datetime.now() - timedelta(days=7), "%Y-%m-%dT%H:%M:%S%z")
-    request_path = __edr.config('Dirs')['XML_FILE_NAME']
-    request_sig_path = __edr.config('Dirs')['SIG_FILE_NAME']
-    pem_file = __edr.config('Dirs')['PEM_FILE_NAME']
+    request_path = __edr.config('Dirs')['xml_file_name']
+    request_sig_path = __edr.config('Dirs')['sig_file_name']
+    pem_file = __edr.config('Dirs')['pem_file_name']
     request_file = open(request_path, 'w')
     request_file.write(request_text)
     request_file.close()
@@ -50,9 +50,9 @@ def full_request():
     <email>vh-group@vh-group.net</email>
     </request>
     """
-    request_path = __edr.config('Dirs')['XML_FILE_NAME']
-    request_sig_path = __edr.config('Dirs')['SIG_FILE_NAME']
-    pem_file = __edr.config('Dirs')['PEM_FILE_NAME']
+    request_path = __edr.config('Dirs')['xml_file_name']
+    request_sig_path = __edr.config('Dirs')['sig_file_name']
+    pem_file = __edr.config('Dirs')['pem_file_name']
     request_file = open(request_path, 'w')
     request_file.write(request_text)
     request_file.close()
