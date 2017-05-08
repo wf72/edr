@@ -42,10 +42,10 @@ def gen_request(**kwargs):
 def request2db(data, **kwargs):
     __start()
     con, cur = __edr.DBConnect()
-    __edr.printt("INSERT requests SET time=%(time)s, data=%(data)s, diff=%(diff)s, code=%(code)s;" %
+    __edr.printt("INSERT requests SET time=%(time)s, data=%(data)s, code=%(code)s;" %
                 {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"),
                  'data': data, 'code': kwargs.get('code', "")})
-    cur.execute("INSERT requests SET time=%(time)s, data=%(data)s, diff=%(diff)s, code=%(code)s;",
+    cur.execute("INSERT requests SET time=%(time)s, data=%(data)s, code=%(code)s;",
                 {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"),
                  'data': data, 'code': kwargs.get('code', "")})
     con.commit()
