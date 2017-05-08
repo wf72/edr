@@ -240,7 +240,7 @@ def CreateDB():
                 `time` DATETIME,
                 `code` VARCHAR(255),
                 `data` TEXT,
-                'diff' TINYINT,
+                `diff` TINYINT,
                 ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
