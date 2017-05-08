@@ -67,7 +67,7 @@ def full_request():
 def request2db(data, **kwargs):
     __start()
     con, cur = __edr.DBConnect()
-    cur.execute("INSERT requests SET time=%(time)s data=%(data)s diff=%(diff)s code=%(code)s;",
+    cur.execute("INSERT requests SET time=%(time)s, data=%(data)s, diff=%(diff)s, code=%(code)s;",
                 {'time': datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S%z"), 'data': data,
                  'diff': 1 if kwargs.get('diff', False) else 0, 'code': kwargs.get('code', "")})
     cur.close()
