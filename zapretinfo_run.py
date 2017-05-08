@@ -511,7 +511,7 @@ def main(argv):
             zapretinfo_request.diff_request()
         else:
             zapretinfo_request.full_request()
-        start({'diff': diff})
+        start(**{'diff': diff})
 
 
 if __name__ == "__main__":
