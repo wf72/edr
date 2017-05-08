@@ -197,7 +197,7 @@ def CreateDB():
         `decOrg` VARCHAR(30),
         `url` TEXT,
         `domain` VARCHAR(255),
-        'code' VARCHAR(255),
+        `code` VARCHAR(255),
         `ip` TEXT,
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
@@ -222,10 +222,11 @@ def CreateDB():
         concreate.commit()
         sqltext = """CREATE TABLE IF NOT EXISTS requests (
                 `time` DATETIME,
-                'code' VARCHAR(255),
+                `code` VARCHAR(255),
                 `data` TEXT,
                 'diff' TINYINT,
                 ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
+        printt(sqltext)
         curcreate.execute(sqltext)
         concreate.commit()
         curcreate.close()
