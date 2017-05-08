@@ -10,13 +10,16 @@ def __start():
     __edr.config()
 
 
-def diff_request():
+def gen_request(**kwargs):
     __start()
     con, cur = __edr.DBConnect()
-    cur.execute("SELECT max(time) FROM requests;")
-    data = cur.fetchall()
-    if data[0][0]:
-        request_date = str(data[0][0]).replace(" ", "T")+"+06:00"
+    if kwargs.get('diff', False):
+        cur.execute("SELECT max(time) FROM requests;")
+        data = cur.fetchall()
+        if data[0][0]:
+            request_date = str(data[0][0]).replace(" ", "T")+"+06:00"
+        else:
+            request_date = "2012-01-01T01:01:01.000+06:00"
     else:
         request_date = "2012-01-01T01:01:01.000+06:00"
     cur.close()
@@ -39,28 +42,6 @@ def diff_request():
     request_file.write(request_text)
     request_file.close()
     os.system("%(openssl)s smime -sign -in %(zapros)s -out %(zapros_sig)s -binary -signer %(pem)s -outform DER -nodetach" %
-              {"zapros": request_path, "zapros_sig": request_sig_path, "pem": pem_file, 'openssl': openssl})
-
-
-def full_request():
-    __start()
-    request_text = """<?xml version="1.0" encoding="windows-1251"?>
-    <request>
-            <requestTime>2012-01-01T01:01:01.000+06:00</requestTime>
-            <operatorName>Общество с ограниченной ответственностью «ВиЭйчДжи»</operatorName>
-            <inn>7202217753</inn>
-            <ogrn>1117232016076</ogrn>
-    <email>vh-group@vh-group.net</email>
-    </request>
-    """
-    request_path = __edr.config('Dirs')['xml_file_name']
-    request_sig_path = __edr.config('Dirs')['sig_file_name']
-    pem_file = __edr.config('Dirs')['pem_file_name']
-    openssl = __edr.config('Dirs')['openssl_path']
-    request_file = open(request_path, 'w')
-    request_file.write(request_text)
-    request_file.close()
-    os.system("openssl smime -sign -in %(zapros)s -out %(zapros_sig)s -binary -signer %(pem)s -outform DER -nodetach" %
               {"zapros": request_path, "zapros_sig": request_sig_path, "pem": pem_file, 'openssl': openssl})
 
 

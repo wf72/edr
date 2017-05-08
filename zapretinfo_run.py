@@ -491,10 +491,7 @@ def main(argv):
     if createdb:
         CreateDB()
     elif startupdate:
-        if diff:
-            zapretinfo_request.diff_request()
-        else:
-            zapretinfo_request.full_request()
+        zapretinfo_request.gen_request(**{'diff': diff})
         start(**{'diff': diff})
 
 
