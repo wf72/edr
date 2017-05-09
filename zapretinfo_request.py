@@ -58,7 +58,10 @@ def get_last_dump_date():
     con, cur = __edr.DBConnect()
     cur.execute('SELECT max(time) FROM requests;')
     data = cur.fetchall()
-    last_dump_date_epoch = int(data[0][0].strftime('%s'))*1000
+    if data[0][0]:
+        last_dump_date_epoch = int(data[0][0].strftime('%s'))*1000
+    else:
+        last_dump_date_epoch = 0
     return last_dump_date_epoch
 
 
