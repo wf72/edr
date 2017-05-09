@@ -341,10 +341,8 @@ def getLastDumpDate():
     printt("Проверка последнего изменения файла на сервере")
     client = suds.client.Client(API_URL)
     result = client.service.getLastDumpDateEx()
-    printt("Результат:")
-    LogWrite("Результат:")
-    printt(unicode(result))
-    LogWrite(unicode(result))
+    printt("Результат: %s" % unicode(result))
+    LogWrite("Результат: %s" % unicode(result))
     return result
 
 
@@ -385,7 +383,15 @@ def start(**kwargs):
     delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
     if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
         if delta <= 79200:
+            printt("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
+            LogWrite("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
             return
+        else:
+            printt("Последний обмен был больше 22 часов назад. Запускаем обмен.")
+            LogWrite("Последний обмен был больше 22 часов назад. Запускаем обмен.")
+    else:
+        printt("Есть срочные обновления. Запускаем обмен.")
+        LogWrite("Есть срочные обновления. Запускаем обмен.")
     zabbix_status_write(0)
     request = sendRequest(XML_FILE_NAME, SIG_FILE_NAME, dumpFormatVersion)
     # Проверяем, принят ли запрос к обработке
