@@ -17,6 +17,7 @@ import zapretdelete_duple
 import zapretnginx
 import zapret_ipfile
 import zapretinfo_request
+from datetime import datetime
 from time import strftime
 from pid.decorator import pidfile
 
@@ -339,7 +340,7 @@ def getLastDumpDate():
     """Проверка последнего изменения файла на сервере"""
     printt("Проверка последнего изменения файла на сервере")
     client = suds.client.Client(API_URL)
-    result = client.service.getLastDumpDate()
+    result = client.service.getLastDumpDateEx()
     printt("Результат:")
     LogWrite("Результат:")
     printt(unicode(result))
@@ -381,6 +382,10 @@ def start(**kwargs):
     DeleteTrash()
     DBConnect()
     date_file = getLastDumpDate()
+    delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
+    if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
+        if delta <= 79200:
+            return
     zabbix_status_write(0)
     request = sendRequest(XML_FILE_NAME, SIG_FILE_NAME, dumpFormatVersion)
     # Проверяем, принят ли запрос к обработке
