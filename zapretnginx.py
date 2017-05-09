@@ -6,6 +6,7 @@ from urlparse import urlparse
 from urllib import quote
 from shutil import copyfile
 import zapretinfo_run as __edr
+from pid.decorator import pidfile
 # from multiprocessing.dummy import Pool as ThreadPool
 
 
@@ -123,6 +124,7 @@ def __genereate(**kwargs):
     __edr.LogWrite("Genereate nginx file done")
 
 
+@pidfile()
 def main(**kwargs):
     if __edr.str2bool(__edr.config('Main')['nginx']):
         __start()

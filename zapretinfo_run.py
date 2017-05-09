@@ -380,7 +380,7 @@ def start(**kwargs):
     date_file = getLastDumpDate()
     delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
     if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
-        if delta >= 79200:
+        if delta >= 72000:
             printt("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
             LogWrite("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
             return
@@ -436,7 +436,7 @@ def start(**kwargs):
                 zapretdelete_duple.main()
                 zapret_ipfile.main()
                 zapretbind.main()
-                zapretnginx.main(**kwargs)
+                #zapretnginx.main(**kwargs)
                 LogWrite('It is Done!')
                 printt('It is Done!')
                 break
