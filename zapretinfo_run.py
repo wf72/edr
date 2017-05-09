@@ -341,8 +341,6 @@ def getLastDumpDate():
     printt("Проверка последнего изменения файла на сервере")
     client = suds.client.Client(API_URL)
     result = client.service.getLastDumpDateEx()
-    printt("Результат: %s" % unicode(result))
-    LogWrite("Результат: %s" % unicode(result))
     return result
 
 
