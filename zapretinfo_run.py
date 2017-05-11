@@ -378,18 +378,22 @@ def start(**kwargs):
     DeleteTrash()
     DBConnect()
     date_file = getLastDumpDate()
-    delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
-    if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
-        if delta >= 72000:
-            printt("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
-            LogWrite("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
-            return
+    if kwargs.get("force", False):
+        delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
+        if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
+            if delta >= 72000:
+                printt("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
+                LogWrite("Последний обмен был меньше 22 часов назад. Закрываеи обмен.")
+                return
+            else:
+                printt("Последний обмен был больше 22 часов назад. Запускаем обмен.")
+                LogWrite("Последний обмен был больше 22 часов назад. Запускаем обмен.")
         else:
-            printt("Последний обмен был больше 22 часов назад. Запускаем обмен.")
-            LogWrite("Последний обмен был больше 22 часов назад. Запускаем обмен.")
+            printt("Есть срочные обновления. Запускаем обмен.")
+            LogWrite("Есть срочные обновления. Запускаем обмен.")
     else:
-        printt("Есть срочные обновления. Запускаем обмен.")
-        LogWrite("Есть срочные обновления. Запускаем обмен.")
+        printt("Принудительный запуск обновлений.")
+        LogWrite("Принудительный запуск обновлений.")
     zabbix_status_write(0)
     request = sendRequest(XML_FILE_NAME, SIG_FILE_NAME, dumpFormatVersion)
     # Проверяем, принят ли запрос к обработке
@@ -468,12 +472,13 @@ def start(**kwargs):
 def main(argv):
     config()
     try:
-        opts, args = getopt.getopt(argv, "hcudv", ["createdb", "update", "verbose"])
+        opts, args = getopt.getopt(argv, "hcudvf", ["createdb", "update", "verbose", "force"])
     except getopt.GetoptError:
         print '-h for help'
         sys.exit(2)
     startupdate = False
     createdb = False
+    kwargs = ""
     for opt, arg in opts:
         if opt == '-h':
             print """--createdb or -c to create database
@@ -490,11 +495,13 @@ def main(argv):
             startupdate = True
         elif opt in ("-c", "--createdb"):
             createdb = True
+        elif opt in ("-f", "--force"):
+            kwargs['force'] = True
     if createdb:
         CreateDB()
     elif startupdate:
         zapretinfo_request.gen_request()
-        start()
+        start(**kwargs)
 
 
 if __name__ == "__main__":
