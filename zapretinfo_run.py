@@ -378,7 +378,7 @@ def start(**kwargs):
     DeleteTrash()
     DBConnect()
     date_file = getLastDumpDate()
-    if kwargs.get("force", False):
+    if not kwargs.get("force", False):
         delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
         if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
             if delta >= 72000:
@@ -496,7 +496,7 @@ def main(argv):
         elif opt in ("-c", "--createdb"):
             createdb = True
         elif opt in ("-f", "--force"):
-            kwargs['force'] = True
+            kwargs.upadate({'force': True})
     if createdb:
         CreateDB()
     elif startupdate:
