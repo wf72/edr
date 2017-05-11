@@ -478,7 +478,7 @@ def main(argv):
         sys.exit(2)
     startupdate = False
     createdb = False
-    kwargs = ""
+    kwargs = {}
     for opt, arg in opts:
         if opt == '-h':
             print """--createdb or -c to create database
