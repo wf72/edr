@@ -496,7 +496,7 @@ def main(argv):
         elif opt in ("-c", "--createdb"):
             createdb = True
         elif opt in ("-f", "--force"):
-            kwargs.upadate({'force': True})
+            kwargs.update({'force': True})
     if createdb:
         CreateDB()
     elif startupdate:
