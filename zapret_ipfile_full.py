@@ -37,7 +37,7 @@ def __gen_ipfile():
         con, cur = __edr.DBConnect()
         __edr.printt("Write ip's to file")
         __edr.LogWrite("Write ip's to file")
-        cur.execute("SELECT ip FROM edrdata WHERE disabled=0 GROUP BY ip;")
+        cur.execute("SELECT ip FROM edrdata GROUP BY ip;")
         data = cur.fetchall()
         for ip in data:
             for i in literal_eval(ip[0]):
@@ -45,7 +45,7 @@ def __gen_ipfile():
     if __edr.str2bool(__edr.config('Main')['export_dns2ip_file']):
         __edr.printt("Write domain names to file")
         __edr.LogWrite("Write domain names to file")
-        cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
+        cur.execute("SELECT domain FROM edrdata GROUP BY domain;")
         data = cur.fetchall()
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
         domains = sorted((domain for domain in domains if __check_domain(domain)))
