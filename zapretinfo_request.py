@@ -12,6 +12,12 @@ def __start():
 
 def gen_request(**kwargs):
     __start()
+    try:
+        openssl = __edr.config('Dirs')['openssl_path']
+        if not openssl:
+            return
+    except KeyError:
+        return
     con, cur = __edr.DBConnect()
     request_date = datetime.strftime(datetime.now(), "%Y-%m-%dT%H:%M:%S%z")
     # else:
@@ -31,7 +37,6 @@ def gen_request(**kwargs):
     request_path = __edr.config('Dirs')['xml_file_name']
     request_sig_path = __edr.config('Dirs')['sig_file_name']
     pem_file = __edr.config('Dirs')['pem_file_name']
-    openssl = __edr.config('Dirs')['openssl_path']
     request_file = open(request_path, 'w')
     request_file.write(request_text)
     request_file.close()
