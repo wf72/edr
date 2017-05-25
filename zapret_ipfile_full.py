@@ -6,6 +6,7 @@ from shutil import copyfile
 from ast import literal_eval
 from string import punctuation
 from pid import PidFile
+from pid import PidFileError
 
 
 import zapretinfo_run as __edr
@@ -25,6 +26,7 @@ def __check_domain(domain):
             return False
     except dns.exception.DNSException:
         return False
+
 
 def __clean_domain_name(domain):
     while domain[0] in punctuation:
@@ -67,6 +69,7 @@ def main():
         except PidFileError:
             __edr.printt("Идёт обновление базы, выполненние невозможно.")
             __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
+
 
 if __name__ == "__main__":
     main()

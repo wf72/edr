@@ -8,6 +8,7 @@ from shutil import copyfile
 import zapretinfo_run as __edr
 from pid.decorator import pidfile
 from pid import PidFile
+from pid import PidFileError
 # from multiprocessing.dummy import Pool as ThreadPool
 
 
