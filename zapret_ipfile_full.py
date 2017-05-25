@@ -5,6 +5,7 @@
 from shutil import copyfile
 from ast import literal_eval
 from string import punctuation
+from pid.decorator import pidfile
 from pid import PidFile
 from pid import PidFileError
 
@@ -60,6 +61,7 @@ def __gen_ipfile():
     copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
 
 
+@pidfile()
 def main():
     if __edr.str2bool(__edr.config('Main')['nginx']):
         __start()
