@@ -132,10 +132,8 @@ def main(**kwargs):
             with PidFile("zapretinfo_run.py.pid"):
                 __start()
                 __genereate(**kwargs)
-        except PidFileAlreadyLockedError:
-            __edr.printt("Идёт обновление базы, выполненние невозможно.")
-            __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
-
+        except PidFileError:
+            print("Идёт обновление базы, выполненние невозможно.")
 
 
 if __name__ == "__main__":
