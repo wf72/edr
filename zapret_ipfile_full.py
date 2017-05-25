@@ -5,6 +5,9 @@
 from shutil import copyfile
 from ast import literal_eval
 from string import punctuation
+from pid import PidFile
+
+
 import zapretinfo_run as __edr
 import dns.resolver
 
@@ -57,9 +60,13 @@ def __gen_ipfile():
 
 def main():
     if __edr.str2bool(__edr.config('Main')['nginx']):
-        __start()
-        __gen_ipfile()
-
+        try:
+            with PidFile("zapretinfo_run.py.pid"):
+                __start()
+                __gen_ipfile()
+        except PidFileAlreadyLockedError:
+            __edr.printt("Идёт обновление базы, выполненние невозможно.")
+            __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
 
 if __name__ == "__main__":
     main()

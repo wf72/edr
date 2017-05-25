@@ -7,6 +7,7 @@ from urllib import quote
 from shutil import copyfile
 import zapretinfo_run as __edr
 from pid.decorator import pidfile
+from pid import PidFile
 # from multiprocessing.dummy import Pool as ThreadPool
 
 
@@ -127,8 +128,14 @@ def __genereate(**kwargs):
 @pidfile()
 def main(**kwargs):
     if __edr.str2bool(__edr.config('Main')['nginx']):
-        __start()
-        __genereate(**kwargs)
+        try:
+            with PidFile("zapretinfo_run.py.pid"):
+                __start()
+                __genereate(**kwargs)
+        except PidFileAlreadyLockedError:
+            __edr.printt("Идёт обновление базы, выполненние невозможно.")
+            __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
+
 
 
 if __name__ == "__main__":
