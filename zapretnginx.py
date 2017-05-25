@@ -128,12 +128,13 @@ def __genereate(**kwargs):
 @pidfile()
 def main(**kwargs):
     if __edr.str2bool(__edr.config('Main')['nginx']):
+        __start()
         try:
             with PidFile("zapretinfo_run.py.pid"):
-                __start()
                 __genereate(**kwargs)
         except PidFileError:
-            print("Идёт обновление базы, выполненние невозможно.")
+            __edr.printt("Идёт обновление базы, выполненние невозможно.")
+            __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
 
 
 if __name__ == "__main__":
