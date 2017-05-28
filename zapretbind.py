@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-__author__ = 'wf'
+# __author__ = 'wf'
 
-import zapretinfo_run as __edr
 from shutil import copyfile
+from multiprocessing.dummy import Pool as ThreadPool
+import zapretinfo_run as __edr
 
 
 def __start():
@@ -13,31 +14,41 @@ def __start():
     con, cur = __edr.DBConnect()
 
 
+def __write_to_file(data):
+    conf_file_path = __edr.config('Dirs')['bind_file']
+    conf_file = open(conf_file_path+".tmp", 'w')
+    conf_file.write("%s\n" % data)
+    conf_file.close()
+
+
+def __domainparse(domain):
+    skip_domain = ['youtube.com', 'www.youtube.com']
+    #__edr.printt(domain.strip())
+    if not domain.lower() in skip_domain:
+        if domain[-1:].isalpha():
+            write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };' % (
+                domain, __edr.config('Dirs')['bind_block_file'])
+            return write_data
+    return ""
+
+
 def __genereate():
     """
     Создаём файл настроек для bind
     :return:
     """
     __edr.LogWrite("Genereate bind file")
-    skip_domain = ['youtube.com', 'www.youtube.com']
-    bind_file_path = __edr.config('Dirs')['bind_file']
-    bind_file = open(bind_file_path+".tmp", 'w')
     cur.execute("SELECT domain FROM edrdata WHERE disabled=0 GROUP BY domain;")
     data = cur.fetchall()
-    data2 = set([__edr.idnaconv(domain[0]) for domain in data])
-    for rec in data2:
-        __edr.printt(rec)
-        edr_url = rec.strip()
-        if not edr_url.lower() in skip_domain:
-            if edr_url[-1:].isalpha():
-                write_data = ('zone "%s" { type master; file "%s"; allow-query { any; }; };\n' % (
-                    edr_url, __edr.config('Dirs')['bind_block_file']))
-            else:
-                continue
-            bind_file.write(write_data)
-    bind_file.close()
+    data2 = sorted(set([__edr.idnaconv(domain[0].strip()) for domain in data]))
+    cur.close()
     con.close()
-    copyfile(bind_file_path+".tmp",bind_file_path)
+    pool = ThreadPool(int(__edr.config('Main')['threads']))
+    result = pool.map(__domainparse, data2)
+    __write_to_file("\n".join(result))
+    bind_file_path = __edr.config('Dirs')['bind_file']
+    copyfile(bind_file_path+".tmp", bind_file_path)
+    __edr.LogWrite("Genereate bind file done")
 
 
 def main():

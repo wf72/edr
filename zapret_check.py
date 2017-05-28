@@ -57,7 +57,6 @@ def checkblockedsites():
     __edr.LogWrite("Start check urls", "zb_check")
     f = urllib2.urlopen('http://api.antizapret.info/all.php?type=csv')
     reader = csv.reader(f, delimiter=';')
-    pool = ThreadPool(4)
     result = {'notblocked': [], 'errors': [], 'blocked': []}
     urls = []
     count = 0
@@ -73,6 +72,7 @@ def checkblockedsites():
                 url = "http://%s" % url
             urls.append(url)
             count += 1
+    pool = ThreadPool(int(__edr.config('Main')['threads']))
     results = pool.map(checksite, urls)
     for i in results:
         for key in result.keys():

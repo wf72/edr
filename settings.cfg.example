@@ -13,6 +13,7 @@ max_url_check = 50
 find_words = <img src="http://vh-group.net/images/logo.jpg" align="middle" alt="VHG"></center> | asd
 # Время ожидания ответа при проверке блокировки
 check_timeout = 5
+threads = 4 # количество потоков
 
 
 [URLS]
@@ -29,6 +30,7 @@ dbPassword = 123
 [Dirs]
 XML_FILE_NAME = zapros.xml
 SIG_FILE_NAME = zapros.xml.sign
+pem_file_name = pem.pem
 dumpFormatVersion = 2.0
 path_IP_file = edr_ipfile.txt
 filelog = edr.log
@@ -37,3 +39,4 @@ bind_file = bind_file.conf
 zb_check_file = zb_check_status
 bind_block_file = /etc/namedb/master/bind_edr_block
 nginx_conf_file =/usr/share/edr/nginx_edr.conf
+openssl_path = /usr/bin/openssl
