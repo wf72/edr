@@ -470,7 +470,7 @@ def start(**kwargs):
 def main(argv):
     config()
     try:
-        with PidFile("zapretinfo_run.py.pid")
+        with PidFile("zapretinfo_run.py.pid"):
             try:
                 opts, args = getopt.getopt(argv, "hcudvf", ["createdb", "update", "verbose", "force"])
             except getopt.GetoptError:
