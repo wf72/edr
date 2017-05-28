@@ -430,16 +430,12 @@ def start(**kwargs):
                     start()
                 else:
                     zf.close()
-                # file = open(work_dir + 'dump.xml', "r")
-                #data = "" #  file.read()
                 zapretinfo_request.request2db(date_file, **kwargs)
-                #exportIp(work_dir + 'result' + '.zip')
                 UpdateTable(**kwargs)
                 con.close()
                 zapretdelete_duple.main()
                 zapret_ipfile.main()
                 zapretbind.main()
-                #zapretnginx.main(**kwargs)
                 LogWrite('It is Done!')
                 printt('It is Done!')
                 break
@@ -447,10 +443,8 @@ def start(**kwargs):
                 # Архив не получен, проверяем причину.
                 if request['resultComment'] == 'запрос обрабатывается':
                     # Если это сообщение об обработке запроса, то просто ждем минутку.
-                    printt('Not ready yet.')
-                    printt('sleep 180 sec')
-                    LogWrite('Not ready yet.')
-                    LogWrite('sleep 180 sec')
+                    printt('Not ready yet. sleep 180 sec')
+                    LogWrite('Not ready yet. sleep 180 sec')
                     time.sleep(180)
                 else:
                     # Если это любая другая ошибка, выводим ее и прекращаем работу
