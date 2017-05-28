@@ -27,7 +27,6 @@ def __domainparse(edr_domain):
     # Формируем секцию server
     if '\\' in edr_domain:
         edr_domain = edr_domain.split('\\')[0]
-
     con, cur = __edr.DBConnect()
     cur.execute("SELECT url FROM edrdata WHERE disabled=0 and url like %s;", ('%://' + edr_domain + '/%',))
     edr_urls = cur.fetchall()

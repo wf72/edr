@@ -14,13 +14,12 @@ import MySQLdb as db
 import suds
 import zapretbind
 import zapretdelete_duple
-import zapretnginx
 import zapret_ipfile
 import zapretinfo_request
 from datetime import datetime
 from time import strftime
-from pid.decorator import pidfile
-
+from pid import PidFile
+from pid import PidFileError
 
 def del_front_punctuation(params):
     if params[0] == ".":
@@ -468,40 +467,43 @@ def start(**kwargs):
         con.close()
 
 
-@pidfile()
 def main(argv):
     config()
     try:
-        opts, args = getopt.getopt(argv, "hcudvf", ["createdb", "update", "verbose", "force"])
-    except getopt.GetoptError:
-        print '-h for help'
-        sys.exit(2)
-    startupdate = False
-    createdb = False
-    kwargs = {}
-    for opt, arg in opts:
-        if opt == '-h':
-            print """--createdb or -c to create database
---update or -u to update dump
--h to see that message
-                """
-            sys.exit()
-        elif opt in ("-v", "--verbose"):
-            global Verbose
-            Verbose = True
-            printt("Verbose mode on")
-        elif opt in ("-u", "--update"):
-            printt("Запускаем обмен")
-            startupdate = True
-        elif opt in ("-c", "--createdb"):
-            createdb = True
-        elif opt in ("-f", "--force"):
-            kwargs.update({'force': True})
-    if createdb:
-        CreateDB()
-    elif startupdate:
-        zapretinfo_request.gen_request()
-        start(**kwargs)
+        with PidFile("zapretinfo_run.py.pid")
+            try:
+                opts, args = getopt.getopt(argv, "hcudvf", ["createdb", "update", "verbose", "force"])
+            except getopt.GetoptError:
+                print '-h for help'
+                sys.exit(2)
+            startupdate = False
+            createdb = False
+            kwargs = {}
+            for opt, arg in opts:
+                if opt == '-h':
+                    print """--createdb or -c to create database
+        --update or -u to update dump
+        -h to see that message
+                        """
+                    sys.exit()
+                elif opt in ("-v", "--verbose"):
+                    global Verbose
+                    Verbose = True
+                    printt("Verbose mode on")
+                elif opt in ("-u", "--update"):
+                    printt("Запускаем обмен")
+                    startupdate = True
+                elif opt in ("-c", "--createdb"):
+                    createdb = True
+                elif opt in ("-f", "--force"):
+                    kwargs.update({'force': True})
+            if createdb:
+                CreateDB()
+            elif startupdate:
+                zapretinfo_request.gen_request()
+                start(**kwargs)
+    except PidFileError:
+        printt("Уже запущено обновление.")
 
 
 if __name__ == "__main__":
