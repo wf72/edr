@@ -8,14 +8,23 @@ from string import punctuation
 from pid.decorator import pidfile
 from pid import PidFile
 from pid import PidFileError
-
-
 import zapretinfo_run as __edr
 import dns.resolver
 
 
 def __start():
     __edr.config()
+
+
+def __domain2ip(domain):
+    try:
+        ips = dns.resolver.query(domain, 'A')
+        if len(ips) > 0:
+            return set(ip for ip in ips)
+        else:
+            return False
+    except dns.exception.DNSException:
+        return False
 
 
 def __check_domain(domain):
@@ -39,8 +48,8 @@ def __clean_domain_name(domain):
 
 def __gen_ipfile():
     ipfile = open(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", 'w')
+    con, cur = __edr.DBConnect()
     if __edr.str2bool(__edr.config('Main')['export_ip_file']):
-        con, cur = __edr.DBConnect()
         __edr.printt("Write ip's to file")
         __edr.LogWrite("Write ip's to file")
         cur.execute("SELECT ip FROM edrdata GROUP BY ip;")
@@ -54,11 +63,14 @@ def __gen_ipfile():
         cur.execute("SELECT domain FROM edrdata GROUP BY domain;")
         data = cur.fetchall()
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
-        domains = sorted((domain for domain in domains if __check_domain(domain)))
+        ips = set()
         for domain in domains:
-            ipfile.write("%s\n" % domain)
+            ips.add(__domain2ip(domain))
+        for ip in ips:
+            ipfile.write("%s\n" % ip)
     ipfile.close()
     copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
+    con.close
 
 
 @pidfile()
