@@ -65,7 +65,9 @@ def __gen_ipfile():
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
         ips = set()
         for domain in domains:
-            ips = ips.union(__domain2ip(domain))
+            ip = __domain2ip(domain)
+            if ip:
+                ips = ips.union(ip)
         for ip in ips:
             ipfile.write("%s\n" % ip)
     ipfile.close()
