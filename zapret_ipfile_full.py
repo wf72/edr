@@ -20,7 +20,7 @@ def __domain2ip(domain):
     try:
         ips = dns.resolver.query(domain, 'A')
         if len(ips) > 0:
-            return set(ip for ip in ips)
+            return (ip for ip in ips)
         else:
             return False
     except dns.exception.DNSException:
