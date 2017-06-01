@@ -20,7 +20,7 @@ def __domain2ip(domain):
     try:
         ips = dns.resolver.query(domain, 'A')
         if len(ips) > 0:
-            return (ip for ip in ips)
+            return set(ip.to_text() for ip in ips)
         else:
             return False
     except dns.exception.DNSException:
@@ -65,7 +65,7 @@ def __gen_ipfile():
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
         ips = set()
         for domain in domains:
-            ips.add(__domain2ip(domain))
+            ips = ips.union(__domain2ip(domain))
         for ip in ips:
             ipfile.write("%s\n" % ip)
     ipfile.close()
