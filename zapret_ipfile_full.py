@@ -82,7 +82,8 @@ def main():
         __start()
         try:
             with PidFile("zapretinfo_run.py.pid"):
-                __gen_ipfile()
+                True
+            __gen_ipfile()
         except PidFileError:
             __edr.printt("Идёт обновление базы, выполненние невозможно.")
             __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")

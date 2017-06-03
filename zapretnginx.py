@@ -134,7 +134,8 @@ def main(**kwargs):
         __start()
         try:
             with PidFile("zapretinfo_run.py.pid"):
-                __genereate(**kwargs)
+                True
+            __genereate(**kwargs)
         except PidFileError:
             __edr.printt("Идёт обновление базы, выполненние невозможно.")
             __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
