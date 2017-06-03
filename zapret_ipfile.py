@@ -34,7 +34,6 @@ def __gen_ipfile():
         con.close()
         __edr.printt(data)
         for ip in data:
-            __edr.printt(literal_eval(ip[0]))
             for i in literal_eval(ip[0]):
                 ipfile.write("%s\n" % i)
         for ip in blacklist():
