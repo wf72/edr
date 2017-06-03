@@ -12,7 +12,7 @@ def __start():
 
 
 def blacklist():
-    f = open(__edr.str2bool(__edr.config('Dirs')['path_blacklist_ips']),'r')
+    f = open(__edr.config('Dirs')['path_blacklist_ips'],'r')
     return set(line for line in f)
 
 
