@@ -19,9 +19,12 @@ def __gen_ipfile():
         __edr.LogWrite("Write ip's to file")
         if __edr.str2bool(__edr.config('Main')['export_clear_ip']):
             cur.execute("SELECT ip FROM edrdata WHERE disabled=0 and domain='ip' GROUP BY ip;")
+            data = cur.fetchall()
+            cur.execute('SELECT ip FROM edrdata WHERE disabled=0 and domain rlike "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" GROUP BY ip;')
+            data += cur.fetchall()
         else:
             cur.execute("SELECT ip FROM edrdata WHERE disabled=0 GROUP BY ip;")
-        data = cur.fetchall()
+            data = cur.fetchall()
         cur.close()
         con.close()
         __edr.printt(data)
