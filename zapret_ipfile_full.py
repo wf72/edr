@@ -9,6 +9,7 @@ from pid.decorator import pidfile
 from pid import PidFile
 from pid import PidFileError
 import zapretinfo_run as __edr
+import zapret_ipfile
 import dns.resolver
 
 
@@ -63,7 +64,7 @@ def __gen_ipfile():
         cur.execute("SELECT domain FROM edrdata GROUP BY domain;")
         data = cur.fetchall()
         domains = sorted(set([__edr.idnaconv(__clean_domain_name(domain[0])) for domain in data]))
-        ips = set()
+        ips = zapret_ipfile.blacklist()
         for domain in domains:
             ip = __domain2ip(domain)
             if ip:
