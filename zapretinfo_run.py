@@ -246,8 +246,8 @@ def CreateDB():
 def UpdateTable(**kwargs):
     printt("Обновляем базу")
     LogWrite("Обновляем базу")
-    cur.execute("UPDATE edrdata SET disabled=1")
-    con.commit()
+    # cur.execute("UPDATE edrdata SET disabled=1")
+    # con.commit()
     printt("XML parse")
     LogWrite("XML parse")
     try:
