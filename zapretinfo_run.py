@@ -272,6 +272,7 @@ def UpdateTable(**kwargs):
             includeTime = child.attrib['includeTime'].replace('T', ' ').strip()
             for child2 in child:
                 printt(child2.tag)
+                printt(child2.text)
                 if child2.tag == 'decision':
                     decDate = child2.attrib['date'].encode('utf8').strip()
                     decNumber = child2.attrib['number'].encode('utf8').strip()
