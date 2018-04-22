@@ -270,20 +270,22 @@ def UpdateTable(**kwargs):
             idd = child.attrib['id'].encode('utf8').strip()
             includeTime = child.attrib['includeTime'].replace('T', ' ').strip()
             for child2 in child:
-                if child2.tag == 'decision':
-                    decDate = child2.attrib['date'].encode('utf8').strip()
-                    decNumber = child2.attrib['number'].encode('utf8').strip()
-                    decOrg = child2.attrib['org'].encode('utf8').strip()
-                elif child2.tag == 'url':
-                    url = child2.text.strip().encode('utf8').strip()
-                    url = "all://%s/" % domain if not url else url
-                elif child2.tag == 'domain':
-                    domain = child2.text.strip().encode('utf8').strip()
-                    url = "all://%s/" % domain if not url else url
-                elif child2.tag == 'ip':
-                    ip.add(child2.text.strip().encode('utf8').strip())
-                    if not domain:
-                        domain = 'ip'
+                print("{}\n".format(child2))
+                if child2.text:
+                    if child2.tag == 'decision':
+                        decDate = child2.attrib['date'].encode('utf8').strip()
+                        decNumber = child2.attrib['number'].encode('utf8').strip()
+                        decOrg = child2.attrib['org'].encode('utf8').strip()
+                    elif child2.tag == 'url':
+                        url = child2.text.strip().encode('utf8').strip()
+                        url = "all://%s/" % domain if not url else url
+                    elif child2.tag == 'domain':
+                        domain = child2.text.strip().encode('utf8').strip()
+                        url = "all://%s/" % domain if not url else url
+                    elif child2.tag == 'ip':
+                        ip.add(child2.text.strip().encode('utf8').strip())
+                        if not domain:
+                            domain = 'ip'
             if url and ip and domain and decDate and decNumber and decOrg:
                 cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
