@@ -270,7 +270,6 @@ def UpdateTable(**kwargs):
             idd = child.attrib['id'].encode('utf8').strip()
             includeTime = child.attrib['includeTime'].replace('T', ' ').strip()
             for child2 in child:
-                print("{}\n".format(child2))
                 if child2.tag == 'decision':
                     decDate = child2.attrib['date'].encode('utf8').strip()
                     decNumber = child2.attrib['number'].encode('utf8').strip()
@@ -285,7 +284,7 @@ def UpdateTable(**kwargs):
                     try:
                         ip.add(child2.text.strip().encode('utf8').strip())
                     except:
-                        print(child2.text)
+                        print("error on {}".format(child2.text))
                     if not domain:
                         domain = 'ip'
             if url and ip and domain and decDate and decNumber and decOrg:
