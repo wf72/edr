@@ -14,15 +14,18 @@ import MySQLdb as db
 import suds
 import zapretbind
 import zapretdelete_duple
-import zapretnginx
 import zapret_ipfile
+import zapretinfo_request
+from datetime import datetime
 from time import strftime
-from pid.decorator import pidfile
-
+from pid import PidFile
+from pid import PidFileError
 
 def del_front_punctuation(params):
-    if params[0] in ".":
+    if params[0] == ".":
         params = "*%s" % params
+    if params[-1] == ".":
+        params = params[:-1]
     return params
 
 
@@ -36,7 +39,6 @@ def idnaconv(url, reverse=False):
                 return tmp_url.strip().decode('idna')
             except UnicodeEncodeError:
                 return tmp_url.strip()
-
         else:
             if type(url) == unicode:
                 #printt("Result: %s" % tmp_url.strip().encode('idna'))
@@ -73,19 +75,15 @@ def config(section=''):
                      'db': '',
                      'dns_serv': '80.78.96.1',
                      'Verbose': False}
-
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
     Config.read(work_dir+"/settings.cfg")
-
     global Verbose
     Verbose = Config.get('Main', 'Verbose')
     if not section:
         global API_URL, XML_FILE_NAME, SIG_FILE_NAME, path_IP_file, filelog, zabbix_status_file, STOP_URL, \
             dumpFormatVersion
-
         API_URL = Config.get('URLS', 'API_URL')
         STOP_URL = Config.get('URLS', 'STOP_URL')
-
         if Config.get('Dirs', 'XML_FILE_NAME')[0] == "/":
             XML_FILE_NAME = Config.get('Dirs', 'XML_FILE_NAME')
         else:
@@ -108,14 +106,11 @@ def config(section=''):
         else:
             zabbix_status_file = work_dir + Config.get('Dirs', 'zabbix_status_file')
         return
-
     elif section == 'DBConfig':
         return {'host': Config.get('DBConfig', 'dbHost'),
                 'user': Config.get('DBConfig', 'dbUser'),
                 'passwd': Config.get('DBConfig', 'dbPassword'),
                 'db': Config.get('DBConfig', 'dbName'),
-                #'charset': 'utf8mb4',
-                #'use_unicode': 'True',
                 }
     else:
         dict1 = {}
@@ -133,7 +128,6 @@ def config(section=''):
             except SystemError as e:
                 printt("exception on %s!" % option)
                 dict1[option] = None
-
         return dict1
 
 
@@ -158,11 +152,9 @@ def LogWrite(message,type = ""):
 def DBConnect():
     global cur, con
     try:
-        printt("Start connecting to DB")
         con = db.connect(**config('DBConfig'))
         con.set_character_set('utf8mb4')
         cur = con.cursor()
-        printt("Connecting done")
         # cur.execute('SET NAMES `utf8`')
         cur.execute("SET NAMES utf8mb4;")
         cur.execute("SET CHARACTER SET utf8mb4;")
@@ -170,15 +162,14 @@ def DBConnect():
         return con, cur
     except db.Error as e:
         printt(e)
+        raise
 
 
 def CreateDB():
     dbRootUser = raw_input("Enter mysql superuser name [%s]: " % 'root')
     if not dbRootUser:
         dbRootUser = 'root'
-
     dbRootPass = getpass.getpass("Enter mysql superuser password: ")
-
     try:
         printt("Create DB on host: %s User: %s, Pass: %s" % (config('DBConfig')['host'], dbRootUser, dbRootPass))
         concreate = db.connect(host=config('DBConfig')['host'], user=dbRootUser, passwd=dbRootPass, db='mysql')
@@ -197,6 +188,7 @@ def CreateDB():
         `decOrg` VARCHAR(30),
         `url` TEXT,
         `domain` VARCHAR(255),
+        `code` VARCHAR(255),
         `ip` TEXT,
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
@@ -204,6 +196,14 @@ def CreateDB():
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
         printt(sqltext)
         curcreate.execute(sqltext)
+    except db.Error as e:
+        try:
+            print
+            "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+        except IndexError:
+            print
+            "MySQL Error: %s" % str(e)
+    try:
         sqltext = """CREATE TABLE IF NOT EXISTS version (
         version VARCHAR(4)
         ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
@@ -216,34 +216,38 @@ def CreateDB():
                                 'db': config('DBConfig')['db']}
         curcreate.execute(sqltext)
         concreate.commit()
-        curcreate.execute("INSERT INTO version SET `version`=%s", (0.3,))
-        #curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
+        curcreate.execute("INSERT INTO version SET `version`=%s", (0.4,))
+        # curcreate.execute("ALTER TABLE edrdata ADD INDEX (url(20), id, domain);")
+        concreate.commit()
+    except db.Error as e:
+        try:
+            print
+            "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
+        except IndexError:
+            print
+            "MySQL Error: %s" % str(e)
+    try:
+        sqltext = """CREATE TABLE IF NOT EXISTS requests (
+                `time` DATETIME,
+                `code` VARCHAR(255),
+                `data` TEXT
+                ) ENGINE = InnoDB DEFAULT CHARACTER SET=utf8;"""
+        printt(sqltext)
+        curcreate.execute(sqltext)
         concreate.commit()
         curcreate.close()
-    except db.Error, e:
+    except db.Error as e:
         try:
             print "MySQL Error [%d]: %s" % (e.args[0], e.args[1])
         except IndexError:
             print "MySQL Error: %s" % str(e)
 
 
-def UpdateTable():
-    printt("Data prepare dump file")
-    LogWrite("Data prepare dump file")
-    try:
-        zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
-        zf.extractall(work_dir)
-        printt("Zip extract")
-        LogWrite("Zip extract")
-    except zipfile.BadZipfile as E:
-        printt("Bad Zip File %s" % E )
-        start()
-    else:
-        zf.close()
+def UpdateTable(**kwargs):
     printt("Обновляем базу")
     LogWrite("Обновляем базу")
-    cur.execute("UPDATE edrdata SET disabled=1")
-    con.commit()
+    # cur.execute("UPDATE edrdata SET disabled=1")
+    # con.commit()
     printt("XML parse")
     LogWrite("XML parse")
     try:
@@ -277,25 +281,27 @@ def UpdateTable():
                     domain = child2.text.strip().encode('utf8').strip()
                     url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'ip':
-                    ip.add(child2.text.strip().encode('utf8').strip())
+                    print("child2.text = {}".format(child2.text))
+                    try:
+                        ip.add(child2.text.strip().encode('utf8').strip())
+                    except:
+                        printt("error on %s" % child2.text)
                     if not domain:
                         domain = 'ip'
             if url and ip and domain and decDate and decNumber and decOrg:
                 cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
             includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
+            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
             """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
-
-                printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
-            includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0; \n
-            """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd})
-            con.commit()
-
+                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
+            #     printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            # decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
+            # includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+            # decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
+            # """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+            #        'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
+                con.commit()
     con.commit()
     zabbix_status_write(1)
     printt("DB update done")
@@ -308,12 +314,10 @@ def DeleteTrash():
         os.remove(work_dir + 'result.zip') if os.path.exists(work_dir + 'result.zip') else None
     except OSError:
         pass
-
     try:
         os.remove(work_dir + 'dump.xml') if os.path.exists(work_dir + 'dump.xml') else None
     except OSError:
         pass
-
     try:
         os.remove(work_dir + 'dump.xml.sig') if os.path.exists(work_dir + 'dump.xml.sig') else None
     except OSError:
@@ -336,14 +340,10 @@ def zabbix_status_write(status):
 
 
 def getLastDumpDate():
-    """Проверка последнего изменения файла на серве"""
-    printt("Проверка последнего изменения файла на серве")
+    """Проверка последнего изменения файла на сервере"""
+    printt("Проверка последнего изменения файла на сервере")
     client = suds.client.Client(API_URL)
-    result = client.service.getLastDumpDate()
-    printt("Результат:")
-    LogWrite("Результат:")
-    printt(unicode(result))
-    LogWrite(unicode(result))
+    result = client.service.getLastDumpDateEx()
     return result
 
 
@@ -359,12 +359,9 @@ def sendRequest(requestFile, signatureFile, dumpformatversion):
     printt("Отправляем запрос с данными:")
     LogWrite("Отправляем запрос с данными:")
     # printt(data)
-
     sign = base64.b64encode(data)
-
     client = suds.client.Client(API_URL)
     result = client.service.sendRequest(xml, sign, dumpformatversion)
-
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
@@ -380,18 +377,33 @@ def getResult(code):
     return dict(((k, v.encode('utf-8')) if isinstance(v, suds.sax.text.Text) else (k, v)) for (k, v) in result)
 
 
-def start():
+def start(**kwargs):
     DeleteTrash()
     DBConnect()
-
     date_file = getLastDumpDate()
+    if not kwargs.get("force", False):
+        delta =  (int(datetime.now().strftime("%s")) * 1000) - zapretinfo_request.get_last_dump_date()
+        if zapretinfo_request.get_last_dump_date() > int(date_file['lastDumpDateUrgently']):
+            if delta <= 72000000:
+                printt("Последний обмен был меньше 20 часов назад. Закрываеи обмен.")
+                LogWrite("Последний обмен был меньше 20 часов назад. Закрываеи обмен.")
+                return
+            else:
+                printt("Последний обмен был больше 20 часов назад. Запускаем обмен.")
+                LogWrite("Последний обмен был больше 20 часов назад. Запускаем обмен.")
+        else:
+            printt("Есть срочные обновления. Запускаем обмен.")
+            LogWrite("Есть срочные обновления. Запускаем обмен.")
+    else:
+        printt("Принудительный запуск обновлений.")
+        LogWrite("Принудительный запуск обновлений.")
     zabbix_status_write(0)
     request = sendRequest(XML_FILE_NAME, SIG_FILE_NAME, dumpFormatVersion)
-
     # Проверяем, принят ли запрос к обработке
     if request['result']:
         # Запрос не принят, получен код
         code = request['code']
+        kwargs.update({'code': code})
         printt('Got code %s' % code)
         printt('LastDumpDate %s' % date_file)
         printt('Trying to get result...')
@@ -410,13 +422,24 @@ def start():
                 file = open(work_dir + 'result' + '.zip', "wb")
                 file.write(base64.b64decode(request['registerZipArchive']))
                 file.close()
-                #exportIp(work_dir + 'result' + '.zip')
-                UpdateTable()
+                try:
+                    printt("Extract dump file")
+                    LogWrite("Extract dump file")
+                    zf = zipfile.ZipFile(work_dir + 'result' + '.zip', 'r')
+                    zf.extractall(work_dir)
+                    printt("Zip extracted")
+                    LogWrite("Zip extracted")
+                except zipfile.BadZipfile as E:
+                    printt("Bad Zip File %s" % E)
+                    start()
+                else:
+                    zf.close()
+                zapretinfo_request.request2db(date_file, **kwargs)
+                UpdateTable(**kwargs)
                 con.close()
-                zapret_ipfile.main()
                 zapretdelete_duple.main()
+                zapret_ipfile.main()
                 zapretbind.main()
-                zapretnginx.main()
                 LogWrite('It is Done!')
                 printt('It is Done!')
                 break
@@ -424,10 +447,8 @@ def start():
                 # Архив не получен, проверяем причину.
                 if request['resultComment'] == 'запрос обрабатывается':
                     # Если это сообщение об обработке запроса, то просто ждем минутку.
-                    printt('Not ready yet.')
-                    printt('sleep 180 sec')
-                    LogWrite('Not ready yet.')
-                    LogWrite('sleep 180 sec')
+                    printt('Not ready yet. sleep 180 sec')
+                    LogWrite('Not ready yet. sleep 180 sec')
                     time.sleep(180)
                 else:
                     # Если это любая другая ошибка, выводим ее и прекращаем работу
@@ -443,37 +464,44 @@ def start():
         zabbix_status_write(0)
         con.close()
 
-@pidfile()
+
 def main(argv):
     config()
     try:
-        opts, args = getopt.getopt(argv, "hcuv", ["createdb", "update", "verbose"])
-    except getopt.GetoptError:
-        print '-h for help'
-        sys.exit(2)
-    startupdate = False
-    createdb = False
-    for opt, arg in opts:
-        if opt == '-h':
-            print """--createdb or -c to create database
---update or -u to update dump
--h to see that message
-                """
-            sys.exit()
-        elif opt in ("-v", "--verbose"):
-            global Verbose
-            Verbose = True
-            printt("Verbose mode on")
-        elif opt in ("-u", "--update"):
-            printt("Запускаем обмен")
-            startupdate = True
-        elif opt in ("-c", "--createdb"):
-            createdb = True
-
-    if createdb:
-        CreateDB()
-    elif startupdate:
-        start()
+        with PidFile("zapretinfo_run.py.pid"):
+            try:
+                opts, args = getopt.getopt(argv, "hcudvf", ["createdb", "update", "verbose", "force"])
+            except getopt.GetoptError:
+                print '-h for help'
+                sys.exit(2)
+            startupdate = False
+            createdb = False
+            kwargs = {}
+            for opt, arg in opts:
+                if opt == '-h':
+                    print """--createdb or -c to create database
+        --update or -u to update dump
+        -h to see that message
+                        """
+                    sys.exit()
+                elif opt in ("-v", "--verbose"):
+                    global Verbose
+                    Verbose = True
+                    printt("Verbose mode on")
+                elif opt in ("-u", "--update"):
+                    printt("Запускаем обмен")
+                    startupdate = True
+                elif opt in ("-c", "--createdb"):
+                    createdb = True
+                elif opt in ("-f", "--force"):
+                    kwargs.update({'force': True})
+            if createdb:
+                CreateDB()
+            elif startupdate:
+                zapretinfo_request.gen_request()
+                start(**kwargs)
+    except PidFileError:
+        printt("Уже запущено обновление.")
 
 
 if __name__ == "__main__":
