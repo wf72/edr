@@ -64,3 +64,4 @@ target/
 settings.cfg
 bind_file.conf
 edr.log
+.idea
