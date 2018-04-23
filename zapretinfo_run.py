@@ -260,7 +260,6 @@ def UpdateTable(**kwargs):
     printt("XML parse loop")
     LogWrite("XML parse loop")
     for child in xmlroot:
-        printt(child.tag)
         if child.tag == 'content':
             decDate = ""
             decNumber = ""
@@ -286,24 +285,29 @@ def UpdateTable(**kwargs):
                     try:
                         ip.add(child2.text.strip().encode('utf8').strip())
                     except:
-                        printt("error on %s" % child2.text)
+                        printt("content id={idd} includeTime={includeTime}".format(idd=idd, includeTime=includeTime))
+                        printt("decision date={decDate} number={decNumber} org={decOrg}".format(decDate=decDate,
+                                                                                                decNumber=decNumber,
+                                                                                                   decOrg=decOrg))
+                        printt(child2.text)
+                        printt("error on:  %s" % child2.text)
                     if not domain:
                         domain = 'ip'
-            if url and ip and domain and decDate and decNumber and decOrg:
+
+            if ip and domain and decDate and decNumber and decOrg:
+                #     printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+                # decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
+                # includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
+                # decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
+                # """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
+                #        'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
                 cur.execute("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
             includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
             decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
             """, {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
-                printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
-            includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
-            decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, code=%(code)s, disabled=0; \n
-            """ % {'includeTime': includeTime, 'decDate': decDate, 'decNumber': decNumber,
-                   'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
-            con.commit()
-    con.commit()
+                  'decOrg': decOrg, 'url':url, 'domain': domain, 'ip': str(list(ip)), 'idd': idd, 'code': kwargs.get('code', "")})
+                con.commit()
     zabbix_status_write(1)
     printt("DB update done")
     LogWrite("DB update done")
