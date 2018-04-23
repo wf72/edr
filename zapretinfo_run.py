@@ -292,7 +292,7 @@ def UpdateTable(**kwargs):
                         printt("error on:  %s" % child2.text)
                     if not domain:
                         domain = 'ip'
-
+                        url = "all://%s/" % child2.text.strip().encode('utf8').strip() if not url else url
             if ip and domain and decDate and decNumber and decOrg:
                 #     printt("""INSERT edrdata SET includeTime=%(includeTime)s, decDate=%(decDate)s, decNum=%(decNumber)s,
                 # decOrg=%(decOrg)s, url=%(url)s, domain=%(domain)s, ip=%(ip)s, id=%(idd)s, disabled=0 ON DUPLICATE KEY UPDATE
