@@ -281,7 +281,6 @@ def UpdateTable(**kwargs):
                     domain = child2.text.strip().encode('utf8').strip()
                     url = "all://%s/" % domain if not url else url
                 elif child2.tag == 'ip':
-                    print("child2.text = {}".format(child2.text))
                     try:
                         ip.add(child2.text.strip().encode('utf8').strip())
                     except:
