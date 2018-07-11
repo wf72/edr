@@ -15,16 +15,18 @@ def __start():
 
 
 def __write_to_file(data):
-    conf_file_path = __edr.config('Dirs')['bind_file']
-    conf_file = open(conf_file_path+".tmp", 'w')
-    conf_file.write("%s\n" % data)
-    conf_file.close()
+    if data:
+        conf_file_path = __edr.config('Dirs')['bind_file']
+        conf_file = open(conf_file_path+".tmp", 'w')
+        conf_file.write("%s\n" % data)
+        conf_file.close()
 
 
 def __domainparse(domain):
-    skip_domain = ['youtube.com', 'www.youtube.com']
+    #skip_domain = ['youtube.com', 'www.youtube.com']
+    white_list = __edr.config('Main')['white_list'].split(';')
     #__edr.printt(domain.strip())
-    if not domain.lower() in skip_domain:
+    if not domain.lower() in white_list:
         if domain[-1:].isalpha():
             write_data = 'zone "%s" { type master; file "%s"; allow-query { any; }; };' % (
                 domain, __edr.config('Dirs')['bind_block_file'])

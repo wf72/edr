@@ -14,6 +14,7 @@ find_words = <img src="http://vh-group.net/images/logo.jpg" align="middle" alt="
 # Время ожидания ответа при проверке блокировки
 check_timeout = 5
 threads = 4 # количество потоков
+white_list =  example.com;www.example.com
 
 
 [URLS]

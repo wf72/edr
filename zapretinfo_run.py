@@ -74,7 +74,8 @@ def config(section=''):
                      'passwd': '',
                      'db': '',
                      'dns_serv': '80.78.96.1',
-                     'Verbose': False}
+                     'Verbose': False,
+                     'white_list': 'youtube.com;www.youtube.com'}
     Config = ConfigParser.SafeConfigParser(DefaultConfig)
     Config.read(work_dir+"/settings.cfg")
     global Verbose

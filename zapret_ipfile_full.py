@@ -50,14 +50,17 @@ def __clean_domain_name(domain):
 def __gen_ipfile():
     ipfile = open(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", 'w')
     con, cur = __edr.DBConnect()
+    white_list = __edr.config('Main')['white_list'].split(';')
     if __edr.str2bool(__edr.config('Main')['export_ip_file']):
         __edr.printt("Write ip's to file")
         __edr.LogWrite("Write ip's to file")
         cur.execute("SELECT ip FROM edrdata GROUP BY ip;")
         data = cur.fetchall()
         for ip in data:
-            for i in literal_eval(ip[0]):
-                ipfile.write("%s\n" % i)
+            for ip in literal_eval(ip[0]):
+                if ip not in white_list:
+                    ipfile.write("%s\n" % ip)
+                    __edr.printt('Writed ip: {} db\n'.format(ip))
     if __edr.str2bool(__edr.config('Main')['export_dns2ip_file']):
         __edr.printt("Write domain names to file")
         __edr.LogWrite("Write domain names to file")
@@ -70,7 +73,9 @@ def __gen_ipfile():
             if ip:
                 ips = ips.union(ip)
         for ip in ips:
-            ipfile.write("%s\n" % ip)
+            if ip not in white_list:
+                ipfile.write("%s\n" % ip)
+                __edr.printt('Writed ip: {} from domain: {}\n'.format(ip, domain))
     ipfile.close()
     copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
     con.close

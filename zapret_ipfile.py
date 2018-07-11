@@ -18,6 +18,7 @@ def blacklist():
 
 def __gen_ipfile():
     if __edr.str2bool(__edr.config('Main')['export_ip_file']):
+        white_list = __edr.config('Main')['white_list'].split(';')
         con, cur = __edr.DBConnect()
         ipfile = open(__edr.config('Dirs')['path_ip_file']+".tmp", 'w')
         __edr.printt("Write ip's to file")
@@ -35,7 +36,8 @@ def __gen_ipfile():
         __edr.printt(data)
         for ip in data:
             for i in literal_eval(ip[0]):
-                ipfile.write("%s\n" % i)
+                if i not in white_list:
+                    ipfile.write("%s\n" % i)
         for ip in blacklist():
             ipfile.write("%s\n" % ip)
         ipfile.close()
