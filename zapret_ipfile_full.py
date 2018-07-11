@@ -75,7 +75,7 @@ def __gen_ipfile():
         for ip in ips:
             if ip not in white_list:
                 ipfile.write("%s\n" % ip)
-                __edr.printt('Writed ip: {} from domain: {}\n'.format(ip, domain))
+                __edr.printt('Writed ip: {}: {}\n'.format(ip))
     ipfile.close()
     copyfile(__edr.config('Dirs')['path_ip_file'] + "_full.tmp", __edr.config('Dirs')['path_ip_file'] + "_full")
     con.close
