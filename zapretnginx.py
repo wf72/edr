@@ -84,6 +84,8 @@ def __domainparse(edr_domain):
             path = edr_url.path.strip()
         except UnicodeError:
             path = quote(edr_url.path.strip())
+        if max(x in ['"', '\\', ' '] for x in edr_url.path.strip()):
+            path = quote(edr_url.path.strip())
         urls_to_write.add(path)
     for url_string in sorted(urls_to_write):
         conf_location += """    location "%s" {
