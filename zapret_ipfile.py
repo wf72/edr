@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # __author__ = 'wf'
 
+from pid import PidFile
+from pid import PidFileError
 from shutil import copyfile
 from ast import literal_eval
 import zapretinfo_run as __edr
@@ -46,8 +48,12 @@ def __gen_ipfile():
 
 
 def main():
-    __start()
-    __gen_ipfile()
+    try:
+        with PidFile("zapret_ipfile.py.pid"):
+            __start()
+            __gen_ipfile()
+    except PidFileError:
+        __edr.printt("Уже запущено обновление.")
 
 
 if __name__ == "__main__":

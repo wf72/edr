@@ -3,6 +3,8 @@
 __author__ = 'wf'
 
 import zapretinfo_run as __edr
+from pid import PidFile
+from pid import PidFileError
 
 
 def __start():
@@ -44,9 +46,12 @@ def __genereate():
 
 
 def main():
-    __start()
-    __genereate()
-
+    try:
+        with PidFile("zapretdelete_duple.py.pid"):
+            __start()
+            __genereate()
+    except PidFileError:
+        __edr.printt("Уже запущено обновление.")
 
 if __name__ == "__main__":
     main()

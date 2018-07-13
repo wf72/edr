@@ -4,6 +4,8 @@
 
 from shutil import copyfile
 from multiprocessing.dummy import Pool as ThreadPool
+from pid import PidFile
+from pid import PidFileError
 import zapretinfo_run as __edr
 
 
@@ -54,10 +56,13 @@ def __genereate():
 
 
 def main():
-    if __edr.str2bool(__edr.config('Main')['bind']):
-        __start()
-        __genereate()
-
+    try:
+        with PidFile("zapretbind.py.pid"):
+            if __edr.str2bool(__edr.config('Main')['bind']):
+                __start()
+                __genereate()
+    except PidFileError:
+        printt("Уже запущено обновление.")
 
 if __name__ == "__main__":
     main()

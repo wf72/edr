@@ -1,0 +1,4 @@
+pid
+suds
+dnspython
+MySQL-python

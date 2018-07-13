@@ -83,15 +83,13 @@ def __gen_ipfile():
 
 @pidfile()
 def main():
-    if __edr.str2bool(__edr.config('Main')['nginx']):
-        __start()
-        # try:
-        #     with PidFile("zapretinfo_run.py.pid"):
-        #         True
-        __gen_ipfile()
-        # except PidFileError:
-        #     __edr.printt("Идёт обновление базы, выполненние невозможно.")
-        #     __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
+    __start()
+    try:
+        with PidFile("zapret_ipfile_full.py.pid"):
+            __gen_ipfile()
+    except PidFileError:
+        __edr.printt("Идёт обновление базы, выполненние невозможно.")
+        __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
 
 
 if __name__ == "__main__":
