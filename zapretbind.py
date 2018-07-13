@@ -48,7 +48,7 @@ def __genereate():
     cur.close()
     con.close()
     pool = ThreadPool(int(__edr.config('Main')['threads']))
-    result = pool.map(__domainparse, data2)
+    result = set(pool.map(__domainparse, data2))
     __write_to_file("\n".join(result))
     bind_file_path = __edr.config('Dirs')['bind_file']
     copyfile(bind_file_path+".tmp", bind_file_path)
