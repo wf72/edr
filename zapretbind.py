@@ -62,7 +62,7 @@ def main():
                 __start()
                 __genereate()
     except PidFileError:
-        printt("Уже запущено обновление.")
+        __edr.printt("Уже запущено обновление.")
 
 if __name__ == "__main__":
     main()
