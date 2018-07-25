@@ -190,7 +190,7 @@ def CreateDB():
         `url` TEXT,
         `domain` VARCHAR(255),
         `code` VARCHAR(255),
-        `ip` TEXT,
+        `ip` LONGTEXT,
         `disabled` TINYINT,
          PRIMARY KEY (`id`),
          INDEX (url(255), domain(50))
