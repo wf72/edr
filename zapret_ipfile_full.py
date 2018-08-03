@@ -84,12 +84,7 @@ def __gen_ipfile():
 @pidfile()
 def main():
     __start()
-    try:
-        with PidFile("zapret_ipfile_full.py.pid"):
-            __gen_ipfile()
-    except PidFileError:
-        __edr.printt("Идёт обновление базы, выполненние невозможно.")
-        __edr.LogWrite("Идёт обновление базы, выполненние невозможно.")
+    __gen_ipfile()
 
 
 if __name__ == "__main__":

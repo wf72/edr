@@ -133,7 +133,7 @@ def __genereate(**kwargs):
     __edr.LogWrite("Genereate nginx file done")
 
 
-@pidfile()
+#@pidfile()
 def main(**kwargs):
     if __edr.str2bool(__edr.config('Main')['nginx']):
         __start()

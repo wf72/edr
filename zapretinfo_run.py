@@ -329,6 +329,16 @@ def DeleteTrash():
         pass
 
 
+def delete_disabled():
+    printt("Deleting disabled rows")
+    con, cur = DBConnect()
+    sqltext = """DELETE FROM edrdata WHERE disabled=1;"""
+    printt(sqltext)
+    cur.execute(sqltext)
+    con.commit()
+    con.close()
+
+
 def zabbix_status_write(status):
     """Пишем статус проверки в файл, для zabbix"""
     if config('Main')['zb_file']:
@@ -442,6 +452,7 @@ def start(**kwargs):
                 zapretinfo_request.request2db(date_file, **kwargs)
                 UpdateTable(**kwargs)
                 con.close()
+                delete_disabled()
                 zapretdelete_duple.main()
                 zapret_ipfile.main()
                 zapretbind.main()
