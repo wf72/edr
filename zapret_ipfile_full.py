@@ -19,7 +19,9 @@ def __start():
 
 def __domain2ip(domain):
     try:
-        ips = dns.resolver.query(domain, 'A')
+        dns_resolver = dns.resolver.Resolver()
+        dns_resolver.nameservers = [__edr.config('Main')['dns_serv'], '8.8.8.8']
+        ips = dns_resolver.query(domain, 'A', raise_on_no_answer=False)
         if len(ips) > 0:
             return set(ip.to_text() for ip in ips)
         else:
