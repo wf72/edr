@@ -46,6 +46,7 @@ def __clean_domain_name(domain):
         domain = domain[1:]
     while domain[-1] in punctuation:
         domain = domain[:-1]
+    domain = domain.split('\\')[0]
     return domain
 
 
